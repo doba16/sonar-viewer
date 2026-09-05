@@ -1,20 +1,20 @@
-import { BlobReader, Uint8ArrayWriter, ZipReader, type FileEntry } from "@zip.js/zip.js";
+import { BlobReader, ZipReader, type FileEntry } from "@zip.js/zip.js";
 import type { Recording } from "../../domain/recording/Recording";
 import type { RecordingService } from "../../domain/recording/RecordingService";
-
-function readUint32(buffer: Uint8Array, offset: number) {
-  return buffer[offset + 3] << 24 | buffer[offset + 2] << 16 | buffer[offset + 1] << 8 | buffer[offset]
-}
+import type { ZipFileHolder } from "../ZipFileHolder";
+import { EntryReader } from "../EntryReader";
 
 export class BrowserRecordingService implements RecordingService {
 
-    private zipFile?: ZipReader<unknown>
+    private zipFileHolder: ZipFileHolder
 
     private inputElement: HTMLInputElement
 
     private recordingsOpenedCallback?: (recordings: Recording[]) => void
 
-    constructor() {
+    constructor(zipFileHolder: ZipFileHolder) {
+        this.zipFileHolder = zipFileHolder
+
         this.inputElement = document.createElement("input")
         this.inputElement.type = "file"
         this.inputElement.addEventListener("change", this.handleFileInputChange.bind(this))
@@ -52,9 +52,10 @@ export class BrowserRecordingService implements RecordingService {
 
         // Read zip file
         try {
-            this.zipFile = this.createZipReader(inputFile)
+            const zipFile = this.createZipReader(inputFile)
+            this.zipFileHolder.zipFile = zipFile
 
-            const recordings = await this.findRecordings(this.zipFile)
+            const recordings = await this.findRecordings()
             this.recordingsOpenedCallback?.(recordings)
         } catch (e) {
             console.log(e)
@@ -68,8 +69,8 @@ export class BrowserRecordingService implements RecordingService {
         return new ZipReader(blobReader)
     }
 
-    private async findRecordings(zipFile: ZipReader<unknown>): Promise<Recording[]> {
-        const entries = await zipFile.getEntries()
+    private async findRecordings(): Promise<Recording[]> {
+        const entries = await this.zipFileHolder.getEntries()
         
         const recs: Recording[] = []
     
@@ -85,13 +86,10 @@ export class BrowserRecordingService implements RecordingService {
     }
 
     private async readDatEntry(entry: FileEntry): Promise<Recording> {
-        const arrayWriter = new Uint8ArrayWriter()
-        await entry.getData(arrayWriter)
-        const bytes = await arrayWriter.getData()
-
-        const startTime = readUint32(bytes, 20)
-        const duration = readUint32(bytes, 48)
-        const numberOfPings = readUint32(bytes, 44)
+        const entryReader = new EntryReader(entry)
+        const startTime = await entryReader.readUInt32(20)
+        const duration = await entryReader.readUInt32(48)
+        const numberOfPings = await entryReader.readUInt32(44)
 
         return {
             name: entry.filename,

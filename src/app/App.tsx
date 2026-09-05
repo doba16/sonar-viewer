@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import './App.css'
 import type { Recording } from '../domain/recording/Recording';
 import Header from './widgets/Header';
 import { RecordingList } from '../views/RecordingsList';
 import { useRecordingsService } from '../domain/Services';
+import { RecordingDetails } from '../views/RecordingDetails';
 
 
 
@@ -36,10 +37,9 @@ function App() {
         <>
           <button onClick={() => setSelectedRecording(undefined)}>Zurück zur Auswahl</button>
 
-          <div>
-            <div>{selectedRecording.name}</div>
-          </div>
-          
+          <Suspense fallback="Loading pings...">
+            <RecordingDetails recording={selectedRecording}/>
+          </Suspense>
         </>
       }
 

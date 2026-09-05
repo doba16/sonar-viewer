@@ -4,10 +4,17 @@ import './index.css'
 import App from './app/App.tsx'
 import { BrowserRecordingService } from './adapters/recording/BrowserRecordingService.ts'
 import { ServicesProvider, type Services } from './domain/Services.tsx'
+import { ZipFileHolder } from './adapters/ZipFileHolder.ts'
+import { BrowserPingService } from './adapters/ping/BrowserPingService.ts'
 
-const recordingService = new BrowserRecordingService()
+const zipFileHolder = new ZipFileHolder()
+
+const recordingService = new BrowserRecordingService(zipFileHolder)
+const pingService = new BrowserPingService(zipFileHolder)
+
 const services: Services = {
-  recordingService
+  recordingService,
+  pingService
 }
 
 createRoot(document.getElementById('root')!).render(

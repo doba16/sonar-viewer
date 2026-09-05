@@ -1,8 +1,10 @@
 import { createContext, useContext, type PropsWithChildren } from "react"
 import type { RecordingService } from "./recording/RecordingService"
+import type { PingService } from "./ping/PingService"
 
 export type Services = {
-    recordingService: RecordingService
+    recordingService: RecordingService,
+    pingService: PingService
 }
 
 export const ServicesContext = createContext<Partial<Services>>({})
@@ -22,7 +24,7 @@ export function ServicesProvider({
     )
 }
 
-function useService(serviceName: keyof Services): Services[typeof serviceName] {
+function useService<K extends keyof Services>(serviceName: K): Services[K] {
     const servicesContext = useContext(ServicesContext)
 
     const service = servicesContext[serviceName]
@@ -36,4 +38,8 @@ function useService(serviceName: keyof Services): Services[typeof serviceName] {
 
 export function useRecordingsService() {
     return useService("recordingService")
+}
+
+export function usePingService() {
+    return useService("pingService")
 }
