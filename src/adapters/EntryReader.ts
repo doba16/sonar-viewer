@@ -1,45 +1,36 @@
-import { Uint8ArrayWriter, type FileEntry } from "@zip.js/zip.js";
+import { Uint8ArrayWriter, type FileEntry } from "@zip.js/zip.js"
 
 export class EntryReader {
-    
-    private _entry: FileEntry
-    private _data?: Promise<Uint8Array>
 
-    constructor(entry: FileEntry) {
-        this._entry = entry
+    private _data: Uint8Array
+
+    private constructor(data: Uint8Array) {
+        this._data = data
     }
 
-    async readUInt32(offset: number): Promise<number> {
-        const buffer = await this.obtainData()
+    static async fromFileEntry(entry: FileEntry): Promise<EntryReader> {
+        const arrayWriter = new Uint8ArrayWriter()
+        await entry.getData(arrayWriter)
+        const bytes = await arrayWriter.getData()
+        return new EntryReader(bytes) 
+    }
+
+    readUInt32(offset: number): number {
+        const buffer = this._data
         return buffer[offset + 3] << 24 | buffer[offset + 2] << 16 | buffer[offset + 1] << 8 | buffer[offset]
     }
 
-    async readUInt32LE(offset: number): Promise<number> {
-        const buffer = await this.obtainData()
+    readUInt32LE(offset: number): number {
+        const buffer = this._data
         return buffer[offset] << 24 | buffer[offset + 1] << 16 | buffer[offset + 2] << 8 | buffer[offset + 3]
     }
 
-    async size(): Promise<number> {
-        return (await this.obtainData()).length
+    size(): number {
+        return this._data.length
     }
 
-    async slice(start: number, end: number) {
-        const buffer = await this.obtainData()
-        return buffer.slice(start, end)
+    slice(start: number, end: number) {
+        return this._data.slice(start, end)
     }
-
-    private async obtainData(): Promise<Uint8Array> {
-        if (!this._data) {
-            this._data = new Promise(async res => {
-                const arrayWriter = new Uint8ArrayWriter()
-                await this._entry.getData(arrayWriter)
-                const bytes = await arrayWriter.getData()
-                res(bytes)
-            })
-        }
-
-        return this._data
-    }
-
 
 }

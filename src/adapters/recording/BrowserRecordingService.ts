@@ -2,7 +2,7 @@ import { BlobReader, ZipReader, type FileEntry } from "@zip.js/zip.js";
 import type { Recording } from "../../domain/recording/Recording";
 import type { RecordingService } from "../../domain/recording/RecordingService";
 import type { ZipFileHolder } from "../ZipFileHolder";
-import { EntryReader } from "../EntryReader";
+import { ZipFile } from "../ZipFile";
 
 export class BrowserRecordingService implements RecordingService {
 
@@ -52,10 +52,10 @@ export class BrowserRecordingService implements RecordingService {
 
         // Read zip file
         try {
-            const zipFile = this.createZipReader(inputFile)
+            const zipFile = await this.createZipFile(inputFile)
             this.zipFileHolder.zipFile = zipFile
 
-            const recordings = await this.findRecordings()
+            const recordings = await this.findRecordings(zipFile)
             this.recordingsOpenedCallback?.(recordings)
         } catch (e) {
             console.log(e)
@@ -63,14 +63,15 @@ export class BrowserRecordingService implements RecordingService {
         }
     }
 
-    private createZipReader(file: File): ZipReader<unknown> {
+    private async createZipFile(file: File): Promise<ZipFile> {
         const blob = new Blob([file], { type: file.type })
         const blobReader = new BlobReader(blob)
-        return new ZipReader(blobReader)
+        const zipReader = new ZipReader(blobReader)
+        return await ZipFile.fromZipReader(zipReader)
     }
 
-    private async findRecordings(): Promise<Recording[]> {
-        const entries = await this.zipFileHolder.getEntries()
+    private async findRecordings(zipFile: ZipFile): Promise<Recording[]> {
+        const entries = zipFile.getEntries()
         
         const recs: Recording[] = []
     
@@ -78,18 +79,18 @@ export class BrowserRecordingService implements RecordingService {
             if (entry.directory) continue
     
             if (entry.filename.toLowerCase().endsWith(".dat")) {
-                recs.push(await this.readDatEntry(entry))
+                recs.push(await this.readDatEntry(zipFile, entry))
             }
         }
     
         return recs
     }
 
-    private async readDatEntry(entry: FileEntry): Promise<Recording> {
-        const entryReader = new EntryReader(entry)
-        const startTime = await entryReader.readUInt32(20)
-        const duration = await entryReader.readUInt32(48)
-        const numberOfPings = await entryReader.readUInt32(44)
+    private async readDatEntry(zipFile: ZipFile, entry: FileEntry): Promise<Recording> {
+        const entryReader = await zipFile.getEntryReader(entry)
+        const startTime = entryReader.readUInt32(20)
+        const duration = entryReader.readUInt32(48)
+        const numberOfPings = entryReader.readUInt32(44)
 
         return {
             name: entry.filename,
