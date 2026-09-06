@@ -21,6 +21,7 @@ export class ZipFile {
         let reader = this._entryReaderMap.get(entry.filename)
 
         if (reader !== undefined) {
+            console.log(`Got entry reader for file '${entry.filename}' from cache.`)
             return reader
         }
 
@@ -28,9 +29,11 @@ export class ZipFile {
             throw new Error(`Entry '${entry.filename}' is a directory.`)
         }
 
+        const startTime = Date.now()
         reader = await EntryReader.fromFileEntry(entry)
-
         this._entryReaderMap.set(entry.filename, reader)
+        console.log(`Created new entry reader for file '${entry.filename}'. Took ${Date.now() - startTime}ms.`)
+        
         return reader
     }
 

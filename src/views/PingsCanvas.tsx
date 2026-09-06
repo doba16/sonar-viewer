@@ -17,9 +17,9 @@ export function PingsCanvas({
         const graphicsContext = canvasRef.current?.getContext("2d")
         if (!graphicsContext) return
 
-        for (let y = 0; y < 500; y++) {
+        for (let y = 0; y < 500 && y < pings.length; y++) {
             for (let x = 0; x < 500; x++) {
-                const color = pings[y + 100].soundReturns[x*2]
+                const color = pings[y].soundReturns[x*2]
                 graphicsContext.fillStyle = `rgb(${color}, ${color}, ${color})`
                 graphicsContext.fillRect(x, y, 1, 1)
             }

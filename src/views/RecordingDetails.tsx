@@ -20,7 +20,8 @@ export function RecordingDetails({
 
     useEffect(() => {
         (async () => {
-            const pings = await pingService.loadPings(recording, "side-scan-port")
+            await pingService.createPingIndex(recording, "side-scan-port")
+            const pings = await pingService.loadPings(recording, "side-scan-port", 0, 10000)
 
             const minReturns = pings.reduce((prev, current) => Math.min(prev, current.numberOfReturns), Infinity)
             const maxReturns = pings.reduce((prev, current) => Math.max(prev, current.numberOfReturns), -Infinity)

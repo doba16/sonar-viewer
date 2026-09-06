@@ -5,6 +5,8 @@ export type BeamId = "side-scan-port" | "side-scan-starboard"
 
 export interface PingService {
     
-    loadPings(recording: Recording, beam: BeamId): Promise<Ping[]>
+    createPingIndex(recording: Recording, beam: BeamId): Promise<void>
+
+    loadPings(recording: Recording, beam: BeamId, beginTime: number, endTime: number): Promise<Ping[]>
 
 }
