@@ -1,4 +1,3 @@
-import type { Ping } from "../../domain/ping/Ping";
 import type { BeamId, PingService } from "../../domain/ping/PingService";
 import type { Recording } from "../../domain/recording/Recording";
 import type { ZipFileHolder } from "../ZipFileHolder";
@@ -12,6 +11,15 @@ const BEAM_FILE_NAMES: Record<BeamId, string> = {
 type PingMetadata = {
     timeElapsed: number,
     headerOffset: number
+}
+
+type Ping = {
+    timeElapsed: number,
+    returnCount: number,
+    /* Offset of first return in ping file */
+    returnsBegin: number, 
+    /* Offset of last return in ping file */
+    returnsEnd: number
 }
 
 export class BrowserPingService implements PingService {
@@ -40,51 +48,113 @@ export class BrowserPingService implements PingService {
 
         const beamFile = await this.getBeamFile(recording, beam)
 
-        const [firstPing, secondHeaderOffset] = this.loadPingHeader(0, beamFile)
+        const [firstPing, secondHeaderOffset] = this.loadPingMetadata(0, beamFile)
 
         const pings = [firstPing]
         let offset = secondHeaderOffset
         let lastRecordedPing = firstPing
 
+        let minDelay = Infinity
+        let maxDelay = -Infinity
+
         const fileLength = beamFile.size()
         while (offset < fileLength) {
-            const [nextPing, pingSize] = this.loadPingHeader(offset, beamFile)
+            const [nextPing, pingSize] = this.loadPingMetadata(offset, beamFile)
 
             if (nextPing.timeElapsed >= lastRecordedPing.timeElapsed + 1000) {
                 pings.push(nextPing)
                 lastRecordedPing = nextPing
             }
 
+            const pingDelay = nextPing.timeElapsed - lastRecordedPing.timeElapsed
+            if (pingDelay < minDelay) minDelay = pingDelay
+            if (pingDelay > maxDelay) maxDelay = pingDelay
+
             offset += pingSize
         }
+
+        console.log(`Min delay: ${minDelay}, Max delay: ${maxDelay}`)
 
         this.insertPingIndex(recording, beam, pings)
 
         console.log(`Finished creating ping index for recording '${recording.name}' and beam '${beam}'. Contains ${pings.length} pings. Took ${Date.now() - startTime}ms.`)
     }
 
-    async loadPings(recording: Recording, beam: BeamId, beginTime: number, endTime: number): Promise<Ping[]> {
-        console.log(`Started loading pings for recording '${recording.name}' and beam '${beam}'.`)
-        const startTime = Date.now()
-        
+    async renderPings(recording: Recording, beam: BeamId, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement): Promise<void> {
         const beamFile = await this.getBeamFile(recording, beam)
 
-        const pings: Ping[] = []
-        let offset = 0;
+        const timeFrameStart = timeAtCenter - timeFrame / 2.0
+        const timeFrameEnd = timeAtCenter + timeFrame / 2.0
 
+        const pings = this.loadPings(beamFile, timeFrameStart, timeFrameEnd)
+        this.renderPingArray(pings, canvas, beamFile)
+    }
+
+    private loadPings(beamFile: EntryReader, timeFrameStart: number, timeFrameEnd: number): Ping[] {
         const fileLength = beamFile.size()
         
+        const pings: Ping[] = []
+        let offset = 0;
+        
+        // TODO use ping index
         while (offset < fileLength) {
-            const [ping, size] = await this.loadPing(offset, beamFile)
-            if (ping.timeElapsed >= beginTime && ping.timeElapsed <= endTime) {
+            const [ping, size] = this.loadPing(offset, beamFile)
+            if (ping.timeElapsed >= timeFrameStart && ping.timeElapsed <= timeFrameEnd) {
                 pings.push(ping)
             }
             offset += size
         }
 
-        console.log(`Finished loading pings for recording '${recording.name}' and beam '${beam}'. Contains ${pings.length} pings. Took ${Date.now() - startTime}ms.`)
-
         return pings
+    }
+
+    private renderPingArray(pings: Ping[], canvas: HTMLCanvasElement, pingFile: EntryReader) {
+        // Get maximum number of returns
+        const maxReturnCount = pings.reduce((p, c) => Math.max(p, c.returnCount), 0)
+
+        // Clear original canvas
+        const canvasGraphicsContext = canvas.getContext("2d")
+        
+        if (!canvasGraphicsContext) {
+            throw new Error("Could not get graphics context")
+        }
+
+        canvasGraphicsContext.fillStyle = "black"
+        canvasGraphicsContext.fillRect(0, 0, canvas.width, canvas.height)
+
+        // Only render pings when there are pings to render
+        if (pings.length < 10) {
+            return
+        }
+
+        // Prepare canvas
+        const pingsOnlyCanvas = new OffscreenCanvas(maxReturnCount, pings.length)
+        const graphicsContext = pingsOnlyCanvas.getContext("2d")
+
+        if (!graphicsContext) {
+            throw new Error("Could not get graphics context")
+        }
+
+        // Clear canvas
+        graphicsContext.fillStyle = "black"
+        graphicsContext.fillRect(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
+
+        console.log(pingsOnlyCanvas.width, pingsOnlyCanvas.height)
+
+        const imageData = graphicsContext.getImageData(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
+
+        for (let t = 0; t < pings.length; t++) {
+            const ping = pings[t]
+            for (let x = 0; x < ping.returnCount; x++) {
+                imageData.data[(t * imageData.width + x) * 4] = pingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + x) * 4 + 1] = pingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + x) * 4 + 2] = pingFile.readUInt8(ping.returnsBegin + x)
+            }
+        }
+
+        graphicsContext.putImageData(imageData, 0, 0)
+
+        canvasGraphicsContext.drawImage(pingsOnlyCanvas, 0, 0, canvas.width, canvas.height)
     }
 
     private async getBeamFile(recording: Recording, beam: BeamId) {
@@ -110,7 +180,13 @@ export class BrowserPingService implements PingService {
         return await zipFile.getEntryReader(beamFile)
     }
 
-    private loadPingHeader(headerOffset: number, entry: EntryReader): [PingMetadata, number] {
+    /**
+     * Loads minimal metadata about a ping.
+     * @param headerOffset Offset in the pings file where the ping header starts
+     * @param entry File to read the ping from
+     * @returns Minimal metadata about the ping and the total ping size in bytes including header
+     */
+    private loadPingMetadata(headerOffset: number, entry: EntryReader): [PingMetadata, number] {
         const headerMagicNumber = entry.readUInt32(headerOffset);
 
         if (headerMagicNumber !== 0x21ABDEC0) {
@@ -129,25 +205,24 @@ export class BrowserPingService implements PingService {
         ]
     }
 
+    /**
+     * Loads a single ping from the pings file.
+     * @param headerOffset Offset in the pings file where the ping header begins
+     * @param entry File to load the pings from
+     * @returns The ping that was read from the pings file and the total size of the ping in bytes including header
+     * @throws If the ping header at the given offset does not start with the correct magic number
+     */
     private loadPing(headerOffset: number, entry: EntryReader): [Ping, number] {
-        const headerMagicNumber = entry.readUInt32(headerOffset);
-
-        if (headerMagicNumber !== 0x21ABDEC0) {
-            throw new Error("Header does not start with expected magic number at offset " + headerOffset)
-        }
+        const [pingMetadata] = this.loadPingMetadata(headerOffset, entry)
 
         const numberOfReturns = entry.readUInt32LE(headerOffset + 147)
-        const recordNumber = entry.readUInt32LE(headerOffset + 5)
-        const timeElapsed = entry.readUInt32LE(headerOffset + 10)
-
-        const returns = entry.slice(headerOffset + 152, headerOffset + 152 + numberOfReturns)
 
         return [
             {
-                recordNumber: recordNumber,
-                numberOfReturns: numberOfReturns,
-                soundReturns: returns,
-                timeElapsed
+                timeElapsed: pingMetadata.timeElapsed,
+                returnCount: numberOfReturns,
+                returnsBegin: headerOffset + 152,
+                returnsEnd: headerOffset + 151 + numberOfReturns
             },
             numberOfReturns + 152
         ]

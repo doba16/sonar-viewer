@@ -1,30 +1,29 @@
 import { createRef, useEffect } from "react"
-import type { Ping } from "../domain/ping/Ping"
+import type { Recording } from "../domain/recording/Recording"
+import { usePingService } from "../domain/Services"
 
 type PingsCanvasProps = {
-    pings: Ping[]
+    timePos: number,
+    recording: Recording
 }
 
 export function PingsCanvas({
-    pings
+    recording,
+    timePos
 }: PingsCanvasProps) {
+
+    const pingService = usePingService()
 
     console.log("Render Canvas")
 
     const canvasRef = createRef<HTMLCanvasElement>()
     
     useEffect(() => {
-        const graphicsContext = canvasRef.current?.getContext("2d")
-        if (!graphicsContext) return
-
-        for (let y = 0; y < 500 && y < pings.length; y++) {
-            for (let x = 0; x < 500; x++) {
-                const color = pings[y].soundReturns[x*2]
-                graphicsContext.fillStyle = `rgb(${color}, ${color}, ${color})`
-                graphicsContext.fillRect(x, y, 1, 1)
-            }
-        }
-    }, [pings])
+        
+            if (!canvasRef.current) return
+            pingService.renderPings(recording, "side-scan-port", timePos, 10000, canvasRef.current!)
+        
+    }, [timePos])
 
     return (
         <canvas width={500} height={500} ref={canvasRef} />

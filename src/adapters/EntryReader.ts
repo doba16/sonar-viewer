@@ -1,7 +1,6 @@
 import { Uint8ArrayWriter, type FileEntry } from "@zip.js/zip.js"
 
 export class EntryReader {
-
     private _data: Uint8Array
 
     private constructor(data: Uint8Array) {
@@ -23,6 +22,11 @@ export class EntryReader {
     readUInt32LE(offset: number): number {
         const buffer = this._data
         return buffer[offset] << 24 | buffer[offset + 1] << 16 | buffer[offset + 2] << 8 | buffer[offset + 3]
+    }
+
+    readUInt8(offset: number): number {
+        const buffer = this._data
+        return buffer[offset]
     }
 
     size(): number {
