@@ -1,0 +1,31 @@
+.header {
+    display: flex;
+    gap: .5em;
+    align-items: center;
+
+    width: 100%;
+    padding: .5em;
+
+    background-color: var(--color-red);
+    color: var(--color-yellow);
+    font-weight: bold;
+}
+
+.header .logo {
+    font-size: 24px;
+}
+
+.header button {
+    padding: 4px;
+    border-radius: 4px;
+    border: none;
+    appearance: none;
+    background: transparent;
+    color: inherit;
+
+    display: flex;
+
+    &:hover {
+        background-color: var(--color-yellow_hover)
+    }
+}

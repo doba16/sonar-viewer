@@ -1,0 +1,24 @@
+.empty-state {
+    max-width: 30em;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1em;
+
+    svg {
+        width: 256px;
+        height: 256px;
+    }
+
+    .title {
+        font-weight: bold;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .description {
+        text-align: center;
+    }
+}

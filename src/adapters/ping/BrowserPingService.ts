@@ -54,9 +54,6 @@ export class BrowserPingService implements PingService {
         let offset = secondHeaderOffset
         let lastRecordedPing = firstPing
 
-        let minDelay = Infinity
-        let maxDelay = -Infinity
-
         const fileLength = beamFile.size()
         while (offset < fileLength) {
             const [nextPing, pingSize] = this.loadPingMetadata(offset, beamFile)
@@ -66,14 +63,8 @@ export class BrowserPingService implements PingService {
                 lastRecordedPing = nextPing
             }
 
-            const pingDelay = nextPing.timeElapsed - lastRecordedPing.timeElapsed
-            if (pingDelay < minDelay) minDelay = pingDelay
-            if (pingDelay > maxDelay) maxDelay = pingDelay
-
             offset += pingSize
         }
-
-        console.log(`Min delay: ${minDelay}, Max delay: ${maxDelay}`)
 
         this.insertPingIndex(recording, beam, pings)
 
@@ -143,6 +134,7 @@ export class BrowserPingService implements PingService {
 
         const imageData = graphicsContext.getImageData(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
 
+        // TODO This does not take actual time position of ping into account. All pings are considered to take equally long.
         for (let t = 0; t < pings.length; t++) {
             const ping = pings[t]
             for (let x = 0; x < ping.returnCount; x++) {

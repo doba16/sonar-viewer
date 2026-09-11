@@ -1,11 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './app/App.tsx'
+import App from './ui/app/App.tsx'
 import { BrowserRecordingService } from './adapters/recording/BrowserRecordingService.ts'
 import { ServicesProvider, type Services } from './domain/Services.tsx'
 import { ZipFileHolder } from './adapters/ZipFileHolder.ts'
 import { BrowserPingService } from './adapters/ping/BrowserPingService.ts'
+import "./index.css"
 
 const zipFileHolder = new ZipFileHolder()
 

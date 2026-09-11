@@ -1,0 +1,39 @@
+.button {
+    border: none;
+
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+
+    outline-offset: .125em;
+
+    cursor: pointer;
+
+    display: flex;
+    gap: .5em;
+    align-items: center;
+}
+
+.button.primary {
+    background-color: var(--color-blue);
+    color: white;
+
+    padding: .5em 1em;
+    border-radius: .25em;
+
+    &:has(.start-icon) {
+        padding-left: .5em;
+    }
+
+    &:has(.end-icon) {
+        padding-right: .5em;
+    }
+
+    &:hover {
+        background-color: var(--color-blue_hover);
+    }
+
+    &:active {
+        background-color: var(--color-blue_active);
+    }
+}

@@ -1,0 +1,8 @@
+main.welcome {
+    display: flex;
+    align-items: safe center;
+    justify-content: safe center;
+    flex-direction: column;
+
+    padding: 1em;
+}

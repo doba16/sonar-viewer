@@ -1,6 +1,7 @@
-import { useState } from "react"
-import type { Recording } from "../domain/recording/Recording"
+import { useEffect, useState } from "react"
+import type { Recording } from "../../domain/recording/Recording"
 import { PingsCanvas } from "./PingsCanvas"
+import { usePingService } from "../../domain/Services"
 
 type RecordingDetailsProps = {
     recording: Recording
@@ -13,6 +14,11 @@ export function RecordingDetails({
     console.log("Render Details")
 
     const [timePos, setTimePos] = useState(0)
+
+    const pingService = usePingService()
+    useEffect(() => {
+        pingService.createPingIndex(recording, "side-scan-port")
+    }, [recording])
 
     return (
         <>

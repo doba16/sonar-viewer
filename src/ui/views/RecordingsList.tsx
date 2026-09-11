@@ -1,4 +1,4 @@
-import type { Recording } from "../domain/recording/Recording"
+import type { Recording } from "../../domain/recording/Recording"
 
 type RecordingListProps = {
   recordings: Recording[] | undefined,

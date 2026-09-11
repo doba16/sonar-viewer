@@ -1,6 +1,6 @@
 import { createRef, useEffect } from "react"
-import type { Recording } from "../domain/recording/Recording"
-import { usePingService } from "../domain/Services"
+import type { Recording } from "../../domain/recording/Recording"
+import { usePingService } from "../../domain/Services"
 
 type PingsCanvasProps = {
     timePos: number,
