@@ -12,7 +12,9 @@
   --color-yellow_hover: #ffed0044;
   --color-blue: #0569b4;
   --color-blue_hover: #054d85;
+  --color-blue_hover-transparent: #0569b422;
   --color-blue_active: #04406e;
+  --color-blue_active-transparent: #04406e22;
 }
 
 html, body {

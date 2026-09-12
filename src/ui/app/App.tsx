@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import type { Recording } from '../../domain/recording/Recording';
-import Header from '../widgets/header/Header';
-import { RecordingList } from '../views/RecordingsList';
+import Header, { type HeaderCenter } from '../widgets/header/Header';
+import { RecordingList } from '../views/recordings-list/recordings-list';
 import { useRecordingsService } from '../../domain/Services';
 import { RecordingDetails } from '../views/RecordingDetails';
 import "./App.css"
@@ -20,9 +20,32 @@ function App() {
     return () => recordingService.clearRecordingsService()
   })
 
+  const headerCenter = ((): HeaderCenter => {
+    if (recordings === undefined) {
+      return {
+        state: 'empty',
+      }
+    }
+
+    if (selectedRecording === undefined) {
+      return {
+        state: "recordings-list",
+        filename: "Recordings.zip",
+        type: "zip"
+      }
+    } else {
+      return {
+        state: "recording",
+        recordingName: selectedRecording.name,
+        recordingDate: selectedRecording.startTime,
+        onBack: () => setSelectedRecording(undefined)
+      }
+    }
+  })()
+
   return (
     <>
-      <Header />
+      <Header headerCenter={headerCenter}/>
       
         { recordings === undefined && 
           <Welcome />

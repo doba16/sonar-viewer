@@ -24,9 +24,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="72.301668"
-     inkscape:cy="221.32442"
+     inkscape:zoom="1"
+     inkscape:cx="67.5"
+     inkscape:cy="206"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="1024"
@@ -195,7 +195,8 @@
        inkscape:label="folder-contour"
        clip-path="url(#clipPath14)"
        inkscape:path-effect="#path-effect15"
-       inkscape:original-d="M 6.3499997,6.3499997 V 42.333331 H 50.799998 V 10.583333 H 23.283332 L 21.166666,6.3499997 Z" />
+       inkscape:original-d="M 6.3499997,6.3499997 V 42.333331 H 50.799998 V 10.583333 H 23.283332 L 21.166666,6.3499997 Z"
+       transform="translate(-1.9558712e-7,4.2333331)" />
     <path
        style="fill:#ffed00;fill-opacity:0.500686;stroke:#e30613;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4.3;stroke-dasharray:none;stroke-opacity:1"
        d="M 6.3499995,6.3499997 V 42.333331 H 50.799998 V 10.583333 H 23.283332 L 21.166665,6.3499997 Z"
@@ -204,7 +205,8 @@
        clip-path="url(#clipPath15)"
        inkscape:label="folder-yellow"
        inkscape:path-effect="#path-effect16"
-       inkscape:original-d="M 6.3499995,6.3499997 V 42.333331 H 50.799998 V 10.583333 H 23.283332 L 21.166665,6.3499997 Z" />
+       inkscape:original-d="M 6.3499995,6.3499997 V 42.333331 H 50.799998 V 10.583333 H 23.283332 L 21.166665,6.3499997 Z"
+       transform="translate(-1.9558712e-7,4.2333331)" />
     <path
        style="fill:#ffed00;fill-opacity:0.5;stroke:none;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.3;stroke-dasharray:none;stroke-dashoffset:165.77;stroke-opacity:1"
        id="path6-6"
@@ -216,7 +218,8 @@
        sodipodi:rx="14.816667"
        sodipodi:ry="14.816665"
        d="M 52.916665,33.866665 A 14.816667,14.816665 0 0 1 38.099998,48.68333 14.816667,14.816665 0 0 1 23.283332,33.866665 14.816667,14.816665 0 0 1 38.099998,19.05 14.816667,14.816665 0 0 1 52.916665,33.866665 Z"
-       inkscape:path-effect="#path-effect7;#path-effect9" />
+       inkscape:path-effect="#path-effect7;#path-effect9"
+       transform="translate(-1.9558712e-7,4.2333331)" />
     <path
        style="fill:#ffed00;fill-opacity:0.5;stroke:none;stroke-width:0.79375;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="m 46.566663,46.566663 12.700001,12.7 4.233333,-4.233333 -12.7,-12.7"
@@ -225,10 +228,11 @@
        inkscape:label="handle-yellow"
        clip-path="url(#clipPath17)"
        inkscape:path-effect="#path-effect18"
-       inkscape:original-d="m 46.566663,46.566663 12.700001,12.7 4.233333,-4.233333 -12.7,-12.7" />
+       inkscape:original-d="m 46.566663,46.566663 12.700001,12.7 4.233333,-4.233333 -12.7,-12.7"
+       transform="translate(-1.9558712e-7,4.2333331)" />
     <path
        style="fill:none;stroke:#e30613;stroke-width:0.79375;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="m 46.566663,46.566663 12.700001,12.7 4.233333,-4.233333 -12.7,-12.7"
+       d="m 46.566663,50.799996 12.700001,12.7 4.233333,-4.233333 -12.7,-12.7"
        id="path16"
        sodipodi:nodetypes="cccc"
        inkscape:label="handle-contour" />
@@ -236,14 +240,14 @@
        style="fill:none;fill-opacity:0.500686;stroke:#e30613;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.3;stroke-dasharray:none;stroke-dashoffset:165.77;stroke-opacity:1"
        id="path5-0"
        cx="38.099998"
-       cy="33.866665"
+       cy="38.099998"
        r="10.583333"
        inkscape:label="inner-contour" />
     <ellipse
        style="fill:none;fill-opacity:0.500686;stroke:#e30613;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4.3;stroke-dasharray:none;stroke-dashoffset:165.77;stroke-opacity:1"
        id="path6"
        cx="38.099998"
-       cy="33.866665"
+       cy="38.099998"
        rx="14.816667"
        ry="14.816665"
        inkscape:label="outer-contour" />

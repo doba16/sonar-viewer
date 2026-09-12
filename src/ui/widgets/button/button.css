@@ -37,3 +37,32 @@
         background-color: var(--color-blue_active);
     }
 }
+
+.button.secondary {
+    background-color: transparent;
+    color: var(--color-blue);
+    border: 0.0625em solid var(--color-blue);
+
+    padding: .4375em .9375em;
+    border-radius: .25em;
+
+    &:has(.start-icon) {
+        padding-left: .4375em;
+    }
+
+    &:has(.end-icon) {
+        padding-right: .4375em;
+    }
+
+    &:has(.icon) {
+        padding-inline: .4375em;
+    }
+
+    &:hover {
+        background-color: var(--color-blue_hover-transparent);
+    }
+
+    &:active {
+        background-color: var(--color-blue_active-transparent);
+    }
+}

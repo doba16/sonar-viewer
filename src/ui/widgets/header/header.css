@@ -11,6 +11,33 @@
     font-weight: bold;
 }
 
+.header .left {
+    flex-shrink: 0;
+
+    display: flex;
+    gap: .5em;
+    align-items: center;
+}
+
+.header .center {
+    margin: auto;
+
+    display: flex;
+    gap: .5em;
+    align-items: center;
+}
+
+.framed {
+    border: 1px solid var(--color-yellow);
+    border-radius: .25em;
+
+    display: flex;
+    gap: .25em;
+    align-items: center;
+
+    padding: .25em;
+}
+
 .header .logo {
     font-size: 24px;
 }
@@ -28,4 +55,12 @@
     &:hover {
         background-color: var(--color-yellow_hover)
     }
+}
+
+.header .divider-inline {
+    width: .25em;
+    height: .25em;
+
+    background-color: var(--color-yellow);
+    border-radius: 50%;
 }

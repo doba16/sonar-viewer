@@ -1,0 +1,22 @@
+.data-table {
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    padding: .25em .5em;
+}
+
+.data-table th,
+.data-table tfoot td {
+    border-block: 2px solid black;
+    text-align: left;
+}
+
+.data-table td {
+    border-block: 1px solid black;
+}
+
+.data-table .empty-state {
+    margin: auto;
+}

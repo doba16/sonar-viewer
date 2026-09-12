@@ -22,3 +22,10 @@
         text-align: center;
     }
 }
+
+.empty-state.medium {
+    svg {
+        width: 192px;
+        height: 192px;
+    }
+}

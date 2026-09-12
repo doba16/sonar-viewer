@@ -1,0 +1,26 @@
+.recordings-list {
+    padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    overflow: auto;
+
+    width: 100%;
+    max-width: 75em;
+    margin: auto;
+}
+
+.recordings-details {
+    display: flex;
+    gap: 1em;
+}
+
+.recordings-details .material-symbols-outlined {
+    font-size: 3.75em;
+}
+
+.recordings-details h1 {
+    margin: 0;
+}

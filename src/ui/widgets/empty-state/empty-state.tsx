@@ -4,17 +4,23 @@ type EmptyStateProps = {
     icon: React.ReactNode
     title?: string,
     description?: React.ReactNode,
-    action?: React.ReactNode
+    action?: React.ReactNode,
+    size?: "small" | "medium" | "large"
 }
 
 export function EmptyState({
     icon,
     title,
     description,
-    action
+    action,
+    size
 }: EmptyStateProps) {
+    if (size === undefined) {
+        size = "large"
+    }
+
     return (
-        <div className="empty-state">
+        <div className={`empty-state ${size}`}>
             { icon }
             { title && 
                 <div className="title">
