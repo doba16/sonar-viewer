@@ -102,7 +102,7 @@ export function SonarView({
             })
 
             // Request repaint
-            await pingService.renderPings(recording, "side-scan-port", targetCanvasState.timePosition, 90000, canvas, targetCanvasState.canvasWidth, targetCanvasState.canvasHeight)
+            await pingService.renderPings(recording, targetCanvasState.timePosition, 90000, canvas, targetCanvasState.canvasWidth, targetCanvasState.canvasHeight)
 
             // Mark end of refresh
             setDisplayedCanvasState({

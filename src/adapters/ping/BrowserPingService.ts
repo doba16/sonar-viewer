@@ -71,14 +71,17 @@ export class BrowserPingService implements PingService {
         console.log(`Finished creating ping index for recording '${recording.name}' and beam '${beam}'. Contains ${pings.length} pings. Took ${Date.now() - startTime}ms.`)
     }
 
-    async renderPings(recording: Recording, beam: BeamId, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement, width: number, height: number): Promise<void> {
-        const beamFile = await this.getBeamFile(recording, beam)
+    async renderPings(recording: Recording, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement, width: number, height: number): Promise<void> {
+        const portBeamFile = await this.getBeamFile(recording, "side-scan-port")
+        const starboardBeamFile = await this.getBeamFile(recording, "side-scan-starboard")
 
         const timeFrameStart = timeAtCenter - timeFrame / 2.0
         const timeFrameEnd = timeAtCenter + timeFrame / 2.0
 
-        const pings = this.loadPings(beamFile, timeFrameStart, timeFrameEnd)
-        this.renderPingArray(pings, canvas, beamFile, width, height)
+        const pingsPort = this.loadPings(portBeamFile, timeFrameStart, timeFrameEnd)
+        const pingsStarboard = this.loadPings(starboardBeamFile, timeFrameStart, timeFrameEnd)
+
+        this.renderPingArray(pingsPort, pingsStarboard, canvas, portBeamFile, starboardBeamFile, width, height)
     }
 
     private loadPings(beamFile: EntryReader, timeFrameStart: number, timeFrameEnd: number): Ping[] {
@@ -99,17 +102,20 @@ export class BrowserPingService implements PingService {
         return pings
     }
 
-    private renderPingArray(pings: Ping[], canvas: HTMLCanvasElement, pingFile: EntryReader, width: number, height: number) {
+    private renderPingArray(pingsPort: Ping[], pingsStarboard: Ping[], canvas: HTMLCanvasElement, portPingFile: EntryReader, starboardPingFile: EntryReader, width: number, height: number) {
         // Get maximum number of returns
-        const maxReturnCount = pings.reduce((p, c) => Math.max(p, c.returnCount), 0)
+        const maxPortReturnCount = pingsPort.reduce((p, c) => Math.max(p, c.returnCount), 0)
+        const maxStarboardReturnCount = pingsStarboard.reduce((p, c) => Math.max(p, c.returnCount), 0)
+        const maxReturnCount = Math.max(maxPortReturnCount, maxStarboardReturnCount)
 
         // Only render pings when there are pings to render
-        if (pings.length < 10) {
+        const pingsCount = Math.max(pingsPort.length, pingsStarboard.length)
+        if (pingsCount < 10) {
             return
         }
 
         // Prepare canvas
-        const pingsOnlyCanvas = new OffscreenCanvas(maxReturnCount, pings.length)
+        const pingsOnlyCanvas = new OffscreenCanvas(maxReturnCount * 2, pingsCount)
         const graphicsContext = pingsOnlyCanvas.getContext("2d")
 
         if (!graphicsContext) {
@@ -125,12 +131,22 @@ export class BrowserPingService implements PingService {
         const imageData = graphicsContext.getImageData(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
 
         // TODO This does not take actual time position of ping into account. All pings are considered to take equally long.
-        for (let t = 0; t < pings.length; t++) {
-            const ping = pings[t]
+        // Starboard
+        for (let t = 0; t < pingsStarboard.length; t++) {
+            const ping = pingsStarboard[t]
             for (let x = 0; x < ping.returnCount; x++) {
-                imageData.data[(t * imageData.width + x) * 4] = pingFile.readUInt8(ping.returnsBegin + x)
-                imageData.data[(t * imageData.width + x) * 4 + 1] = pingFile.readUInt8(ping.returnsBegin + x)
-                imageData.data[(t * imageData.width + x) * 4 + 2] = pingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4] = starboardPingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 1] = starboardPingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 2] = starboardPingFile.readUInt8(ping.returnsBegin + x)
+            }
+        }
+        // Port
+        for (let t = 0; t < pingsStarboard.length; t++) {
+            const ping = pingsStarboard[t]
+            for (let x = 0; x < ping.returnCount; x++) {
+                imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4] = portPingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 1] = portPingFile.readUInt8(ping.returnsBegin + x)
+                imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 2] = portPingFile.readUInt8(ping.returnsBegin + x)
             }
         }
 

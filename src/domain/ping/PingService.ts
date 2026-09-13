@@ -8,6 +8,6 @@ export interface PingService {
     
     createPingIndex(recording: Recording, beam: BeamId): Promise<void>
 
-    renderPings(recording: Recording, beam: BeamId, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement, width: number, height: number): Promise<void>
+    renderPings(recording: Recording, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement, width: number, height: number): Promise<void>
 
 }
