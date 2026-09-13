@@ -21,7 +21,7 @@ export function PingsCanvas({
     useEffect(() => {
         
             if (!canvasRef.current) return
-            pingService.renderPings(recording, "side-scan-port", timePos, 10000, canvasRef.current!)
+            pingService.renderPings(recording, "side-scan-port", timePos, 10000, canvasRef.current!, 100, 100)
         
     }, [timePos])
 

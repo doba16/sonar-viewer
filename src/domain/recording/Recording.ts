@@ -4,3 +4,9 @@ export type Recording = {
   duration: number,
   numberOfPings: number
 }
+
+export type Recordings = {
+  recordings: Recording[],
+  filepath: string,
+  type: "zip" | "folder"
+}

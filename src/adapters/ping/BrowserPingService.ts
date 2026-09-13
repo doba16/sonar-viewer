@@ -71,14 +71,14 @@ export class BrowserPingService implements PingService {
         console.log(`Finished creating ping index for recording '${recording.name}' and beam '${beam}'. Contains ${pings.length} pings. Took ${Date.now() - startTime}ms.`)
     }
 
-    async renderPings(recording: Recording, beam: BeamId, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement): Promise<void> {
+    async renderPings(recording: Recording, beam: BeamId, timeAtCenter: number, timeFrame: number, canvas: HTMLCanvasElement, width: number, height: number): Promise<void> {
         const beamFile = await this.getBeamFile(recording, beam)
 
         const timeFrameStart = timeAtCenter - timeFrame / 2.0
         const timeFrameEnd = timeAtCenter + timeFrame / 2.0
 
         const pings = this.loadPings(beamFile, timeFrameStart, timeFrameEnd)
-        this.renderPingArray(pings, canvas, beamFile)
+        this.renderPingArray(pings, canvas, beamFile, width, height)
     }
 
     private loadPings(beamFile: EntryReader, timeFrameStart: number, timeFrameEnd: number): Ping[] {
@@ -99,19 +99,9 @@ export class BrowserPingService implements PingService {
         return pings
     }
 
-    private renderPingArray(pings: Ping[], canvas: HTMLCanvasElement, pingFile: EntryReader) {
+    private renderPingArray(pings: Ping[], canvas: HTMLCanvasElement, pingFile: EntryReader, width: number, height: number) {
         // Get maximum number of returns
         const maxReturnCount = pings.reduce((p, c) => Math.max(p, c.returnCount), 0)
-
-        // Clear original canvas
-        const canvasGraphicsContext = canvas.getContext("2d")
-        
-        if (!canvasGraphicsContext) {
-            throw new Error("Could not get graphics context")
-        }
-
-        canvasGraphicsContext.fillStyle = "black"
-        canvasGraphicsContext.fillRect(0, 0, canvas.width, canvas.height)
 
         // Only render pings when there are pings to render
         if (pings.length < 10) {
@@ -145,6 +135,20 @@ export class BrowserPingService implements PingService {
         }
 
         graphicsContext.putImageData(imageData, 0, 0)
+
+        // Fit canvas to requested size
+        canvas.width = width
+        canvas.height = height
+
+        // Clear original canvas
+        const canvasGraphicsContext = canvas.getContext("2d")
+        
+        if (!canvasGraphicsContext) {
+            throw new Error("Could not get graphics context")
+        }
+
+        canvasGraphicsContext.fillStyle = "black"
+        canvasGraphicsContext.fillRect(0, 0, width, height)
 
         canvasGraphicsContext.drawImage(pingsOnlyCanvas, 0, 0, canvas.width, canvas.height)
     }

@@ -1,4 +1,4 @@
-import type { Recording } from "./Recording";
+import type { Recordings } from "./Recording";
 
 export interface RecordingService {
     
@@ -26,7 +26,7 @@ export interface RecordingService {
      * Sets the callback to call when recordings are opened.
      * @param callback the function to call
      */
-    setRecordingsOpenedCallback(callback: (recordings: Recording[]) => void): void
+    setRecordingsOpenedCallback(callback: (recordings: Recordings) => void): void
 
     /**
      * Removes the callback.

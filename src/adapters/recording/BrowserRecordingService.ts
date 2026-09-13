@@ -1,5 +1,5 @@
 import { BlobReader, ZipReader, type FileEntry } from "@zip.js/zip.js";
-import type { Recording } from "../../domain/recording/Recording";
+import type { Recording, Recordings } from "../../domain/recording/Recording";
 import type { RecordingService } from "../../domain/recording/RecordingService";
 import type { ZipFileHolder } from "../ZipFileHolder";
 import { ZipFile } from "../ZipFile";
@@ -10,7 +10,7 @@ export class BrowserRecordingService implements RecordingService {
 
     private inputElement: HTMLInputElement
 
-    private recordingsOpenedCallback?: (recordings: Recording[]) => void
+    private recordingsOpenedCallback?: (recordings: Recordings) => void
 
     constructor(zipFileHolder: ZipFileHolder) {
         this.zipFileHolder = zipFileHolder
@@ -36,7 +36,7 @@ export class BrowserRecordingService implements RecordingService {
         this.inputElement.click()
     }
 
-    setRecordingsOpenedCallback(callback: (recordings: Recording[]) => void): void {
+    setRecordingsOpenedCallback(callback: (recordings: Recordings) => void): void {
         this.recordingsOpenedCallback = callback
     }
 
@@ -55,7 +55,14 @@ export class BrowserRecordingService implements RecordingService {
             const zipFile = await this.createZipFile(inputFile)
             this.zipFileHolder.zipFile = zipFile
 
-            const recordings = await this.findRecordings(zipFile)
+            const recordingsList = await this.findRecordings(zipFile)
+
+            const recordings: Recordings = {
+                recordings: recordingsList,
+                type: "zip",
+                filepath: inputFile.name
+            }
+
             this.recordingsOpenedCallback?.(recordings)
         } catch (e) {
             console.log(e)

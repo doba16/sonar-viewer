@@ -1,0 +1,97 @@
+.recording-viewer {
+    display: flex;
+    flex-direction: column;
+
+    .viewers {
+        flex-grow: 1;
+        min-height: 0;
+
+        display: grid;
+
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+
+        place-items: stretch;
+
+        > * {
+            min-height: 0;
+            min-width: 0;
+        }
+
+        canvas {
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    .timeline {
+        padding: .25em .5em;
+        display: flex;
+        gap: .5em;
+        align-items: center;
+
+        .slider {
+            --thumb-size: 1em;
+            --track-size: .25em;
+
+            flex-grow: 1;
+            isolation: isolate;
+            position: relative;
+
+            height: var(--thumb-size);
+
+            div {
+                position: absolute;
+                background: var(--color-yellow);
+                inset: 0 calc(var(--thumb-size) / 2);
+                margin: auto;
+                height: var(--track-size);
+
+                z-index: -1;
+
+                &::before {
+                    content: "";
+                    background-color: var(--color-red);
+                    position: absolute;
+
+                    height: 100%;
+                    width: calc(var(--slider-value) / var(--slider-max) * 100%);
+                }
+            }
+
+            input[type=range] {
+                
+                appearance: none;
+                background: none;
+
+                display: block;
+
+                margin: auto;
+                inset: 0;
+
+                position: absolute;
+
+                width: 100%;
+
+                &::-webkit-slider-thumb,
+                &::-moz-range-thumb {
+                    width: var(--thumb-size);
+                    height: var(--thumb-size);
+                    border-radius: 50%;
+
+                    appearance: none;
+                    background-color: var(--color-red);
+                    opacity: 0;
+                    border: none;
+
+                    transition: opacity .3s;
+                }
+
+                &:hover::-webkit-slider-thumb,
+                &:hover::-moz-range-thumb {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

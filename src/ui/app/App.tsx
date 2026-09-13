@@ -1,16 +1,16 @@
 import { Suspense, useEffect, useState } from 'react'
-import type { Recording } from '../../domain/recording/Recording';
+import type { Recording, Recordings } from '../../domain/recording/Recording';
 import Header, { type HeaderCenter } from '../widgets/header/Header';
 import { RecordingList } from '../views/recordings-list/recordings-list';
 import { useRecordingsService } from '../../domain/Services';
-import { RecordingDetails } from '../views/RecordingDetails';
 import "./App.css"
 import { Welcome } from '../views/welcome/welcome';
+import { RecordingViewer } from '../views/recording-viewer/recording-viewer';
 
 
 function App() {
   
-  const [recordings, setRecordings] = useState<Recording[]>()
+  const [recordings, setRecordings] = useState<Recordings>()
   const [selectedRecording, setSelectedRecording] = useState<Recording>()
 
   const recordingService = useRecordingsService()
@@ -30,8 +30,8 @@ function App() {
     if (selectedRecording === undefined) {
       return {
         state: "recordings-list",
-        filename: "Recordings.zip",
-        type: "zip"
+        filename: recordings.filepath,
+        type: recordings.type
       }
     } else {
       return {
@@ -53,17 +53,15 @@ function App() {
 
         { recordings !== undefined && selectedRecording === undefined &&
           <RecordingList
-            recordings={recordings}
+            recordings={recordings.recordings}
             onRecordingSelected={setSelectedRecording}
           />
         }
 
         { selectedRecording !== undefined &&
           <>
-            <button onClick={() => setSelectedRecording(undefined)}>Zurück zur Auswahl</button>
-
             <Suspense fallback="Loading pings...">
-              <RecordingDetails recording={selectedRecording}/>
+              <RecordingViewer recording={selectedRecording}/>
             </Suspense>
           </>
         }
