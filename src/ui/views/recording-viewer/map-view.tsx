@@ -1,4 +1,4 @@
-import {LatLng, Map, map, point, polyline, Projection, tileLayer} from "leaflet"
+import {Control, DomEvent, DomUtil, LatLng, Map, map, point, polyline, Projection, tileLayer} from "leaflet"
 import { useRef } from "react"
 import "leaflet/dist/leaflet.css"
 import type { Recording } from "../../../domain/recording/Recording"
@@ -11,6 +11,14 @@ import "./map-view.css"
 const EASTING_CALIB = 0.9999700053853967 // 0.9998827585548765
 const NORTHING_CALIB = 0.9999824592232249 // 0.9999868838656377
 
+type FollowMode = "centered" | "following" | "detached"
+
+const FOLLOW_MODE_ICONS: Record<FollowMode, string> = {
+    "centered": "my_location",
+    "detached": "location_searching",
+    "following": "keep"
+} 
+
 class SonarMap {
 
     private _map: Map
@@ -18,6 +26,9 @@ class SonarMap {
     private _boatPosition: Coordinate
     private _boatPositionLatLng: LatLng
     private _boatRotation: number = 0
+
+    private _followMode: FollowMode = "centered"
+    private _positionFollowButton: HTMLAnchorElement | undefined
 
     constructor(mapContainer: HTMLElement, center: Coordinate) {
         // Create map
@@ -38,6 +49,13 @@ class SonarMap {
 
         this._map.addEventListener("move", () => this._updateBoat())
         this._map.addEventListener("zoomanim", () => this._updateBoat())
+
+        // Add button for follow mode
+        this._addPositionButton()
+
+        // Handler for updating follow mode on drag
+        this._map.addEventListener("dragstart", () => this._setFollowMode("detached"))
+        this._map.addEventListener("zoom", () => this._setFollowMode("detached"))
     }
 
     addTrack(coordinates: Coordinate[]) {
@@ -56,6 +74,12 @@ class SonarMap {
         this._boatPosition = position
         this._boatPositionLatLng = this._convert(position)
         this._updateBoat()
+
+        if (this._followMode === "following") {
+            this._map.panTo(this._boatPositionLatLng)
+        } else {
+            this._setFollowMode("detached")
+        }
     }
 
     get boatRotation() {
@@ -77,6 +101,53 @@ class SonarMap {
     private _convert(coordinate: Coordinate): LatLng {
         const p = point(coordinate.easting * EASTING_CALIB, coordinate.northing * NORTHING_CALIB)
         return Projection.Mercator.unproject(p)
+    }
+
+    private _addPositionButton() {
+        const PositionFollowButton = Control.extend({
+            options: {
+                position: "topleft"
+            },
+
+            onAdd: () => {
+                const container = DomUtil.create(
+                    'div',
+                    'leaflet-bar leaflet-control leaflet-control-mybutton'
+                );
+
+                const button = DomUtil.create('a', '', container);
+                button.href = '#';
+                button.title = 'Meine Aktion';
+                button.className = "material-symbols-outlined"
+                button.innerHTML = 'location_searching';
+
+                DomEvent.on(button, 'click', (event) => {
+                    DomEvent.stopPropagation(event);
+                    DomEvent.preventDefault(event);
+
+                    if (this._followMode === "detached") {
+                        this._map.panTo(this._boatPositionLatLng)
+                        this._setFollowMode("centered")
+                    } else if (this._followMode === "centered") {
+                        this._setFollowMode("following")
+                    }
+                });
+
+                this._positionFollowButton = button
+
+                return container;
+            }
+        })
+
+        this._map.addControl(new PositionFollowButton())
+    }
+
+    private _setFollowMode(mode: FollowMode) {
+        this._followMode = mode
+
+        if (this._positionFollowButton) {
+            this._positionFollowButton.innerText = FOLLOW_MODE_ICONS[mode]
+        }
     }
 }
 
