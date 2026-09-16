@@ -1,4 +1,4 @@
-import { createRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import type { Recording } from "../../domain/recording/Recording"
 import { usePingService } from "../../domain/Services"
 
@@ -16,7 +16,7 @@ export function PingsCanvas({
 
     console.log("Render Canvas")
 
-    const canvasRef = createRef<HTMLCanvasElement>()
+    const canvasRef = useRef<HTMLCanvasElement>(null)
     
     useEffect(() => {
         

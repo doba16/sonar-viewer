@@ -1,4 +1,4 @@
-import { createRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import type { Recording } from "../../../domain/recording/Recording"
 import { usePingService } from "../../../domain/Services"
 import { useAsyncEffect } from "../../hooks/useAsyncEffect"
@@ -37,7 +37,7 @@ export function SonarView({
 
     const pingService = usePingService()
 
-    const canvasRef = createRef<HTMLCanvasElement>()
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     const [displayedCanvasState, setDisplayedCanvasState] = useState<CanvasState>({
         canvasWidth: -1, // A value that can never be the canvas size so that
@@ -113,6 +113,6 @@ export function SonarView({
     }, [targetCanvasState, displayedCanvasState, recording])
 
     return (
-        <canvas ref={canvasRef} style={{gridColumn:"span 2", gridRow:"span 2"}} />
+        <canvas ref={canvasRef} style={{gridColumn:"span 1", gridRow:"span 2"}} />
     )
 }

@@ -99,11 +99,18 @@ export class BrowserRecordingService implements RecordingService {
         const duration = entryReader.readUInt32(48)
         const numberOfPings = entryReader.readUInt32(44)
 
+        const coordinateEasting = entryReader.readUInt32(24)
+        const coordinateNorthing = entryReader.readUInt32(28)
+
         return {
             name: entry.filename,
             startTime: new Date(startTime * 1000),
             duration: duration,
-            numberOfPings
+            numberOfPings,
+            coordinate: {
+                easting: coordinateEasting,
+                northing: coordinateNorthing
+            }
         }
     }
 

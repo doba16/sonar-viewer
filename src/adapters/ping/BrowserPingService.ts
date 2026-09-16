@@ -2,6 +2,7 @@ import type { BeamId, PingService } from "../../domain/ping/PingService";
 import type { Recording } from "../../domain/recording/Recording";
 import type { ZipFileHolder } from "../ZipFileHolder";
 import { EntryReader } from "../EntryReader";
+import type { BoatPosition, Coordinate } from "../../domain/ping/Ping";
 
 const BEAM_FILE_NAMES: Record<BeamId, string> = {
     "side-scan-port": "B002.SON",
@@ -14,12 +15,16 @@ type PingMetadata = {
 }
 
 type Ping = {
+    heading: number;
     timeElapsed: number,
     returnCount: number,
     /* Offset of first return in ping file */
     returnsBegin: number, 
     /* Offset of last return in ping file */
-    returnsEnd: number
+    returnsEnd: number,
+    // TODO extract into other type for not loading coordinates when only interested in pings
+    coordinateEasting: number,
+    coordinateNorthing: number
 }
 
 export class BrowserPingService implements PingService {
@@ -82,6 +87,56 @@ export class BrowserPingService implements PingService {
         const pingsStarboard = this.loadPings(starboardBeamFile, timeFrameStart, timeFrameEnd)
 
         this.renderPingArray(pingsPort, pingsStarboard, canvas, portBeamFile, starboardBeamFile, width, height)
+    }
+
+    async findCoordinates(recording: Recording): Promise<Coordinate[]> {
+        const beamFile = await this.getBeamFile(recording, "side-scan-port")
+        const pings = this.loadPings(beamFile, 0, Infinity)
+
+        const coordinates: Coordinate[] = []
+        let lastPing = pings[0]
+        coordinates.push({
+            easting: lastPing.coordinateEasting,
+            northing: lastPing.coordinateNorthing
+        })
+
+        for (let ping of pings) {
+            if (lastPing.coordinateEasting != ping.coordinateEasting || lastPing.coordinateNorthing != ping.coordinateNorthing) {
+                coordinates.push({
+                    easting: lastPing.coordinateEasting,
+                    northing: lastPing.coordinateNorthing
+                })
+            }
+            lastPing = ping
+        }
+
+        return coordinates
+    }
+
+    async findCoordinateAt(recording: Recording, time: number): Promise<BoatPosition> {
+        const beamFile = await this.getBeamFile(recording, "side-scan-port")
+        const pings = this.loadPings(beamFile, 0, Infinity)
+
+        for (let ping of pings) {
+            if (ping.timeElapsed > time) {
+                return {
+                    coordinate: {
+                        easting: ping.coordinateEasting,
+                        northing: ping.coordinateNorthing
+                    },
+                    heading: ping.heading
+                }
+            }
+        }
+
+        const ping = pings[pings.length - 1]
+        return {
+            coordinate: {
+                easting: ping.coordinateEasting,
+                northing: ping.coordinateNorthing
+            },
+            heading: ping.heading
+        }
     }
 
     private loadPings(beamFile: EntryReader, timeFrameStart: number, timeFrameEnd: number): Ping[] {
@@ -229,12 +284,19 @@ export class BrowserPingService implements PingService {
 
         const numberOfReturns = entry.readUInt32LE(headerOffset + 147)
 
+        const easting = entry.readUInt32LE(headerOffset + 15)
+        const northing = entry.readUInt32LE(headerOffset + 20)
+        const heading = entry.readUInt16LE(headerOffset + 27) / 10
+
         return [
             {
                 timeElapsed: pingMetadata.timeElapsed,
                 returnCount: numberOfReturns,
                 returnsBegin: headerOffset + 152,
-                returnsEnd: headerOffset + 151 + numberOfReturns
+                returnsEnd: headerOffset + 151 + numberOfReturns,
+                coordinateEasting: easting,
+                coordinateNorthing: northing,
+                heading: heading
             },
             numberOfReturns + 152
         ]

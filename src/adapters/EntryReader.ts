@@ -24,6 +24,11 @@ export class EntryReader {
         return buffer[offset] << 24 | buffer[offset + 1] << 16 | buffer[offset + 2] << 8 | buffer[offset + 3]
     }
 
+    readUInt16LE(offset: number): number {
+        const buffer = this._data
+        return buffer[offset] << 8 | buffer[offset + 1]
+    }
+
     readUInt8(offset: number): number {
         const buffer = this._data
         return buffer[offset]

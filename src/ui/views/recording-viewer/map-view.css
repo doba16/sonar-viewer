@@ -1,0 +1,14 @@
+.boat-marker {
+    --boat-rotation: 0deg;
+    --boat-translate-x: 100px;
+    --boat-translate-y: 0;
+
+    width: 32px;
+    height: 32px;
+
+    position: absolute;
+    transform: translate(-50%, -50%) translate(var(--boat-translate-x), var(--boat-translate-y)) rotate(var(--boat-rotation));
+
+    z-index: 600;
+
+}

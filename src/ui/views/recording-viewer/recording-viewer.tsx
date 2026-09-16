@@ -3,6 +3,7 @@ import type { Recording } from "../../../domain/recording/Recording"
 import "./recording-viewer.css"
 import { TimeDisplay } from "../../widgets/time-display/time-display";
 import { SonarView } from "./sonar-view";
+import { MapView } from "./map-view";
 
 
 declare module "react" {
@@ -27,6 +28,7 @@ export function RecordingViewer({
         <main className="recording-viewer">
             <div className="viewers">
                 <SonarView recording={recording} timePosition={timePosition} />
+                <MapView recording={recording} timePosition={timePosition} />
             </div>
             <div className="timeline">
                 <div>

@@ -1,8 +1,11 @@
+import type { Coordinate } from "../ping/Ping"
+
 export type Recording = {
   name: string,
   startTime: Date,
   duration: number,
-  numberOfPings: number
+  numberOfPings: number,
+  coordinate: Coordinate,
 }
 
 export type Recordings = {
