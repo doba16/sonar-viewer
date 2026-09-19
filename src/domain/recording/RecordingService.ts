@@ -1,5 +1,19 @@
 import type { Recordings } from "./Recording";
 
+export type OpenType = "folder" | "zip"
+
+export type RecordingsOpenEvent = {
+    type: OpenType
+} & ({
+    status: "opening",
+} | {
+    status: "error",
+    error: unknown
+} | {
+    status: "success",
+    recordings: Recordings
+})
+
 export interface RecordingService {
     
     /**
@@ -26,7 +40,7 @@ export interface RecordingService {
      * Sets the callback to call when recordings are opened.
      * @param callback the function to call
      */
-    setRecordingsOpenedCallback(callback: (recordings: Recordings) => void): void
+    setRecordingsOpenCallback(callback: (event: RecordingsOpenEvent) => void): void
 
     /**
      * Removes the callback.

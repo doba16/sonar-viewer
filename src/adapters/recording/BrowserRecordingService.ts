@@ -1,6 +1,6 @@
 import { BlobReader, ZipReader, type FileEntry } from "@zip.js/zip.js";
 import type { Recording, Recordings } from "../../domain/recording/Recording";
-import type { RecordingService } from "../../domain/recording/RecordingService";
+import type { RecordingService, RecordingsOpenEvent } from "../../domain/recording/RecordingService";
 import type { ZipFileHolder } from "../ZipFileHolder";
 import { ZipFile } from "../ZipFile";
 
@@ -10,7 +10,7 @@ export class BrowserRecordingService implements RecordingService {
 
     private inputElement: HTMLInputElement
 
-    private recordingsOpenedCallback?: (recordings: Recordings) => void
+    private recordingsOpenedCallback?: (event: RecordingsOpenEvent) => void
 
     constructor(zipFileHolder: ZipFileHolder) {
         this.zipFileHolder = zipFileHolder
@@ -19,7 +19,7 @@ export class BrowserRecordingService implements RecordingService {
         this.inputElement.type = "file"
         this.inputElement.addEventListener("change", this.handleFileInputChange.bind(this))
     }
-
+    
     isOpenDirectorySupported(): boolean {
         return false
     }
@@ -36,7 +36,7 @@ export class BrowserRecordingService implements RecordingService {
         this.inputElement.click()
     }
 
-    setRecordingsOpenedCallback(callback: (recordings: Recordings) => void): void {
+    setRecordingsOpenCallback(callback: (event: RecordingsOpenEvent) => void): void {
         this.recordingsOpenedCallback = callback
     }
 
@@ -45,10 +45,22 @@ export class BrowserRecordingService implements RecordingService {
     }
 
     private async handleFileInputChange() {
+        this.recordingsOpenedCallback?.({
+            status: "opening",
+            type: "zip"
+        })
+
         const inputFile = this.inputElement.files?.[0]
 
         // Require exactly one uploaded file
-        if (inputFile === undefined) return
+        if (inputFile === undefined) {
+            this.recordingsOpenedCallback?.({
+                status: "error",
+                type: "zip",
+                error: new Error("No file provided.")
+            })
+            return
+        }
 
         // Read zip file
         try {
@@ -63,10 +75,18 @@ export class BrowserRecordingService implements RecordingService {
                 filepath: inputFile.name
             }
 
-            this.recordingsOpenedCallback?.(recordings)
+            this.recordingsOpenedCallback?.({
+                status: "success",
+                type: "zip",
+                recordings: recordings
+            })
         } catch (e) {
             console.log(e)
-            alert("Could not read zip file!")
+            this.recordingsOpenedCallback?.({
+                status: "error",
+                type: "zip",
+                error: e
+            })
         }
     }
 

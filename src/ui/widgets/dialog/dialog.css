@@ -1,0 +1,65 @@
+.dialog {
+    padding: 0;
+    border: none;
+    border-radius: 1em;
+
+    outline: none;
+
+    opacity: 0;
+    transform: translateY(-1em);
+    visibility: hidden;
+    display: block;
+    inset: 0;
+    margin: auto;
+    z-index: 99999;
+
+    transition: .3s ease-out;
+}
+
+.dialog[open] {
+    opacity: 1;
+    transform: translateY(0em);
+    visibility: visible;
+    display: block;
+}
+
+.dialog::backdrop {
+    background-color: #0008;
+    opacity: 0;
+    visibility: hidden;
+    display: block;
+
+    transition: .3s ease-out;
+}
+
+@starting-style {
+    .dialog::backdrop {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.dialog[open]::backdrop {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog-body {
+    padding: 1em 1em;
+}
+
+.dialog-title {
+    font-size: 1rem;
+    padding: .5em 1em;
+    margin: 0;
+
+    border-bottom: 1px solid var(--color-red);
+    color: var(--color-red);
+}
+
+.dialog-footer {
+    padding: 1em;
+    display: flex;
+    gap: .5em;
+    justify-content: flex-end;
+}
