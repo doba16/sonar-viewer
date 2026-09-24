@@ -47,7 +47,7 @@ export function SonarView({
     })
     const [targetCanvasState, setTargetCanvasState] = useState<CanvasState>()
 
-    const [canvasSize, setCanvasSize] = useState({width: 0, height: 0})
+    const [canvasSize, setCanvasSize] = useState({width: 100, height: 100})
 
     // Resize Observer
     useEffect(() => {
@@ -100,6 +100,10 @@ export function SonarView({
                 ...displayedCanvasState,
                 currentlyRefreshing: true
             })
+
+            console.log("Target Canvas State", targetCanvasState)
+
+            if (targetCanvasState.canvasHeight === 0 || targetCanvasState.canvasHeight === 0) return
 
             // Request repaint
             await pingService.renderPings(recording, targetCanvasState.timePosition, 90000, canvas, targetCanvasState.canvasWidth, targetCanvasState.canvasHeight)

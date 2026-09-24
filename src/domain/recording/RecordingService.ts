@@ -1,20 +1,23 @@
+import type { Listenable } from "../listenable/listenable";
 import type { Recordings } from "./Recording";
 
 export type OpenType = "folder" | "zip"
 
-export type RecordingsOpenEvent = {
-    type: OpenType
-} & ({
-    status: "opening",
-} | {
-    status: "error",
-    error: unknown
-} | {
-    status: "success",
-    recordings: Recordings
-})
+export type RecordingServiceEvents = {
+    "opening": {
+        type: OpenType
+    },
+    "error": {
+        type: OpenType,
+        error: unknown
+    },
+    "success": {
+        type: OpenType,
+        recordings: Recordings
+    }
+}
 
-export interface RecordingService {
+export interface RecordingService extends Listenable<RecordingServiceEvents> {
     
     /**
      * Whether this RecordingService supports opening directories.
@@ -35,16 +38,5 @@ export interface RecordingService {
      * Open all recordings from a zip file.
      */
     openZip(): void
-
-    /**
-     * Sets the callback to call when recordings are opened.
-     * @param callback the function to call
-     */
-    setRecordingsOpenCallback(callback: (event: RecordingsOpenEvent) => void): void
-
-    /**
-     * Removes the callback.
-     */
-    clearRecordingsService(): void;
 
 }

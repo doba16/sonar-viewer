@@ -7,7 +7,6 @@ import "./App.css"
 import { Welcome } from '../views/welcome/welcome';
 import { RecordingViewer } from '../views/recording-viewer/recording-viewer';
 import { Dialog } from '../widgets/dialog/dialog';
-import type { RecordingsOpenEvent } from '../../domain/recording/RecordingService';
 
 
 function App() {
@@ -20,19 +19,17 @@ function App() {
   const recordingService = useRecordingsService()
 
   useEffect(() => {
-    recordingService.setRecordingsOpenCallback((e: RecordingsOpenEvent) => {
-      if (e.status === "opening") {
-        setOpeningState("opening")
-      } else if (e.status === "success") {
-        setOpeningState('none')
-        setRecordings(e.recordings)
-      } else {
-        setOpeningState("error")
-        setOpeningError(e.error)
-      }
+    const l1 = recordingService.addListener("opening", () => setOpeningState("opening"))
+    const l2 = recordingService.addListener("success", (d) => {
+      setOpeningState('none')
+      setRecordings(d.recordings)
+    })
+    const l3 = recordingService.addListener("error", (d) => {
+      setOpeningState("error")
+      setOpeningError(d.error)
     })
 
-    return () => recordingService.clearRecordingsService()
+    return () => recordingService.removeEventListener(l1, l2, l3)
   })
 
   const headerCenter = ((): HeaderCenter => {
