@@ -1,5 +1,4 @@
 import { BlobReader, ZipReader, type FileEntry } from "@zip.js/zip.js"
-import { burnCpu } from "../../burn-cpu"
 import type { RecordingServiceEvents } from "../../domain/recording/RecordingService"
 import { ZipFile } from "../storage/ZipFile"
 import { ZipFileHolder } from "../storage/ZipFileHolder"
@@ -21,8 +20,6 @@ export class DefaultRecordingRepository extends DefaultListenable<RecordingServi
         this.publishEvent("opening", {
             type: "zip"
         })
-
-        burnCpu(2000)
 
         // Read zip file
         try {

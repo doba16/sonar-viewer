@@ -1,4 +1,3 @@
-import { burnCpu } from "../../burn-cpu";
 import type { BoatPosition, Coordinate } from "../../domain/ping/Ping";
 import type { BeamId } from "../../domain/ping/PingService";
 import type { Recording } from "../../domain/recording/Recording";
@@ -98,8 +97,6 @@ export class DefaultPingRepository implements PingRepository {
         const portBeamFile = await this.getBeamFile(recording, "side-scan-port")
         const starboardBeamFile = await this.getBeamFile(recording, "side-scan-starboard")
 
-        burnCpu(500)
-
         const timeFrameStart = timeAtCenter - timeFrame / 2.0
         const timeFrameEnd = timeAtCenter + timeFrame / 2.0
 
@@ -188,8 +185,6 @@ export class DefaultPingRepository implements PingRepository {
     async findCoordinateAt(recording: Recording, time: number): Promise<BoatPosition> {
         const beamFile = await this.getBeamFile(recording, "side-scan-port")
         const pings = this.loadPings(beamFile, 0, Infinity)
-
-        burnCpu(500)
 
         for (let ping of pings) {
             if (ping.timeElapsed > time) {
