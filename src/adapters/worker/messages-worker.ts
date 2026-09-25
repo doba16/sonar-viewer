@@ -32,7 +32,7 @@ export function setupWorkerMessaging<T extends InvocableObjects>(invocableObject
             callId: data.callId
         }
 
-        if (result instanceof Blob) {
+        if (result instanceof ImageBitmap) {
             postMessage(resultMessage, [result])
         } else {
             postMessage(resultMessage)

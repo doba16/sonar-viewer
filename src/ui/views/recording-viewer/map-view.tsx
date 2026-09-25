@@ -7,6 +7,7 @@ import { useAsyncEffect } from "../../hooks/useAsyncEffect"
 import type { Coordinate } from "../../../domain/ping/Ping"
 import BoatPositionIcon from "../../icons/misc/boat-location.svg?react"
 import "./map-view.css"
+import { useViewerState } from "./viewer-state"
 
 const EASTING_CALIB = 0.9999700053853967 // 0.9998827585548765
 const NORTHING_CALIB = 0.9999824592232249 // 0.9999868838656377
@@ -166,6 +167,19 @@ export function MapView({
 
     const pingService = usePingService()
 
+    const {} = useViewerState(async (state) => {
+        const position = await pingService.findCoordinateAt(recording, state.timePosition)
+
+        const map = mapRef.current
+        if (!map) return
+
+        console.log("Boat position:", position, "rotation", position.heading )
+
+        map.boatPosition = position.coordinate
+        map.boatRotation = position.heading
+    }, {timePosition}, [recording])
+
+
     useAsyncEffect(async () => {
         const mapRoot = mapRootRef.current
         if (!mapRoot || mapRef.current != null) {
@@ -180,15 +194,7 @@ export function MapView({
     }, [recording])
 
     useAsyncEffect(async () => {
-        const position = await pingService.findCoordinateAt(recording, timePosition)
-
-        const map = mapRef.current
-        if (!map) return
-
-        console.log("Boat position:", position, "rotation", position.heading )
-
-        map.boatPosition = position.coordinate
-        map.boatRotation = position.heading
+        
     }, [timePosition])
 
     return (

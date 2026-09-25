@@ -78,6 +78,23 @@ export class DefaultPingRepository implements PingRepository {
     }
 
     async renderPings(recording: Recording, timeAtCenter: number, timeFrame: number, width: number, height: number): Promise<ImageBitmap> {
+        // Viewport that will be rendered to the screen
+        // Must be at least 1px x 1px to be able to transfer it to ImageBitmap
+        const viewerCanvas = new OffscreenCanvas(Math.max(width, 1), Math.max(height, 1))
+        const viewerCanvasCtx = viewerCanvas.getContext("2d")
+
+        if (!viewerCanvasCtx) {
+            return viewerCanvas.transferToImageBitmap()
+        }
+
+        viewerCanvasCtx.fillStyle = "black"
+        viewerCanvasCtx.fillRect(0, 0, viewerCanvas.width, viewerCanvas.height)
+        
+        // Do not draw if canvas is too small
+        if (width <= 0 || height <= 0) {
+            return viewerCanvas.transferToImageBitmap()
+        }
+        
         const portBeamFile = await this.getBeamFile(recording, "side-scan-port")
         const starboardBeamFile = await this.getBeamFile(recording, "side-scan-starboard")
 
@@ -88,8 +105,60 @@ export class DefaultPingRepository implements PingRepository {
 
         const pingsPort = this.loadPings(portBeamFile, timeFrameStart, timeFrameEnd)
         const pingsStarboard = this.loadPings(starboardBeamFile, timeFrameStart, timeFrameEnd)
+        
+        // Get maximum number of returns
+        const maxPortReturnCount = pingsPort.reduce((p, c) => Math.max(p, c.returnCount), 0)
+        const maxStarboardReturnCount = pingsStarboard.reduce((p, c) => Math.max(p, c.returnCount), 0)
+        const maxReturnCount = Math.max(maxPortReturnCount, maxStarboardReturnCount)
 
-        return this.renderPingArray(pingsPort, pingsStarboard, portBeamFile, starboardBeamFile, width, height).transferToImageBitmap()
+        // Only render pings when there are pings to render
+        const pingsCount = Math.max(pingsPort.length, pingsStarboard.length)
+        if (pingsCount > 10) {
+
+            // Prepare canvas
+            const pingsOnlyCanvas = new OffscreenCanvas(maxReturnCount * 2, pingsCount)
+            const graphicsContext = pingsOnlyCanvas.getContext("2d")
+
+            if (!graphicsContext) {
+                throw new Error("Could not get graphics context")
+            }
+
+            // Clear canvas
+            graphicsContext.fillStyle = "black"
+            graphicsContext.fillRect(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
+
+            console.log(pingsOnlyCanvas.width, pingsOnlyCanvas.height)
+
+            const imageData = graphicsContext.getImageData(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
+
+            // TODO This does not take actual time position of ping into account. All pings are considered to take equally long.
+            // Starboard
+            for (let t = 0; t < pingsStarboard.length; t++) {
+                const ping = pingsStarboard[t]
+                for (let x = 0; x < ping.returnCount; x++) {
+                    imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4] = starboardBeamFile.readUInt8(ping.returnsBegin + x)
+                    imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 1] = starboardBeamFile.readUInt8(ping.returnsBegin + x)
+                    imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 2] = starboardBeamFile.readUInt8(ping.returnsBegin + x)
+                }
+            }
+            // Port
+            for (let t = 0; t < pingsStarboard.length; t++) {
+                const ping = pingsStarboard[t]
+                for (let x = 0; x < ping.returnCount; x++) {
+                    imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4] = portBeamFile.readUInt8(ping.returnsBegin + x)
+                    imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 1] = portBeamFile.readUInt8(ping.returnsBegin + x)
+                    imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 2] = portBeamFile.readUInt8(ping.returnsBegin + x)
+                }
+            }
+
+            graphicsContext.putImageData(imageData, 0, 0)
+
+            viewerCanvasCtx.drawImage(pingsOnlyCanvas, 0, 0, width, height)
+        }
+
+        // TODO draw boat icon here...
+
+        return viewerCanvas.transferToImageBitmap()
     }
 
     async findCoordinates(recording: Recording): Promise<Coordinate[]> {
@@ -119,6 +188,8 @@ export class DefaultPingRepository implements PingRepository {
     async findCoordinateAt(recording: Recording, time: number): Promise<BoatPosition> {
         const beamFile = await this.getBeamFile(recording, "side-scan-port")
         const pings = this.loadPings(beamFile, 0, Infinity)
+
+        burnCpu(500)
 
         for (let ping of pings) {
             if (ping.timeElapsed > time) {
@@ -158,73 +229,6 @@ export class DefaultPingRepository implements PingRepository {
         }
 
         return pings
-    }
-
-    private renderPingArray(pingsPort: Ping[], pingsStarboard: Ping[], portPingFile: EntryReader, starboardPingFile: EntryReader, width: number, height: number): OffscreenCanvas {
-        // Viewport that will be rendered to the screen
-        const viewerCanvas = new OffscreenCanvas(width, height)
-        const viewerCanvasCtx = viewerCanvas.getContext("2d")
-
-        if (!viewerCanvasCtx) {
-            return viewerCanvas
-        }
-
-        viewerCanvasCtx.fillStyle = "black"
-        viewerCanvasCtx.fillRect(0, 0, width, height)
-        
-        // Get maximum number of returns
-        const maxPortReturnCount = pingsPort.reduce((p, c) => Math.max(p, c.returnCount), 0)
-        const maxStarboardReturnCount = pingsStarboard.reduce((p, c) => Math.max(p, c.returnCount), 0)
-        const maxReturnCount = Math.max(maxPortReturnCount, maxStarboardReturnCount)
-
-        // Only render pings when there are pings to render
-        const pingsCount = Math.max(pingsPort.length, pingsStarboard.length)
-        if (pingsCount > 10) {
-
-            // Prepare canvas
-            const pingsOnlyCanvas = new OffscreenCanvas(maxReturnCount * 2, pingsCount)
-            const graphicsContext = pingsOnlyCanvas.getContext("2d")
-
-            if (!graphicsContext) {
-                throw new Error("Could not get graphics context")
-            }
-
-            // Clear canvas
-            graphicsContext.fillStyle = "black"
-            graphicsContext.fillRect(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
-
-            console.log(pingsOnlyCanvas.width, pingsOnlyCanvas.height)
-
-            const imageData = graphicsContext.getImageData(0, 0, pingsOnlyCanvas.width, pingsOnlyCanvas.height)
-
-            // TODO This does not take actual time position of ping into account. All pings are considered to take equally long.
-            // Starboard
-            for (let t = 0; t < pingsStarboard.length; t++) {
-                const ping = pingsStarboard[t]
-                for (let x = 0; x < ping.returnCount; x++) {
-                    imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4] = starboardPingFile.readUInt8(ping.returnsBegin + x)
-                    imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 1] = starboardPingFile.readUInt8(ping.returnsBegin + x)
-                    imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 2] = starboardPingFile.readUInt8(ping.returnsBegin + x)
-                }
-            }
-            // Port
-            for (let t = 0; t < pingsStarboard.length; t++) {
-                const ping = pingsStarboard[t]
-                for (let x = 0; x < ping.returnCount; x++) {
-                    imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4] = portPingFile.readUInt8(ping.returnsBegin + x)
-                    imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 1] = portPingFile.readUInt8(ping.returnsBegin + x)
-                    imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 2] = portPingFile.readUInt8(ping.returnsBegin + x)
-                }
-            }
-
-            graphicsContext.putImageData(imageData, 0, 0)
-
-            viewerCanvasCtx.drawImage(pingsOnlyCanvas, 0, 0, width, height)
-        }
-
-        // TODO draw boat icon here...
-
-        return viewerCanvas
     }
 
     private async getBeamFile(recording: Recording, beam: BeamId) {
