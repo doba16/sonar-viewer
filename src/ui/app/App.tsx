@@ -7,7 +7,7 @@ import "./App.css"
 import { Welcome } from '../views/welcome/welcome';
 import { RecordingViewer } from '../views/recording-viewer/recording-viewer';
 import { Dialog } from '../widgets/dialog/dialog';
-
+import SonarViewerIcon from "../icons/empty-state/sonar.svg?react"
 
 function App() {
   
@@ -17,6 +17,8 @@ function App() {
   const [openingError, setOpeningError] = useState<unknown>()
 
   const recordingService = useRecordingsService()
+
+  const [aboutDialogVisible, setAboutDialogVisible] = useState(false)
 
   useEffect(() => {
     const l1 = recordingService.addListener("opening", () => setOpeningState("opening"))
@@ -57,7 +59,7 @@ function App() {
 
   return (
     <>
-      <Header headerCenter={headerCenter}/>
+      <Header headerCenter={headerCenter} openAboutDialog={() => setAboutDialogVisible(true)}/>
       
       <Dialog
         open={openingState !== "none"}
@@ -93,6 +95,28 @@ function App() {
           </Suspense>
         </>
       }
+
+      <Dialog
+          title='Über Sonar Viewer'
+          open={aboutDialogVisible}
+          primaryButtonCallback={() => setAboutDialogVisible(false)}
+          primaryButtonText='Schließen'
+      >
+        <div className='product-info'>
+          <SonarViewerIcon/>
+          <div>
+            <div><strong>Sonar Viewer</strong> by Dominik Bastian</div>
+            <div>
+              <span className='material-symbols-outlined'>code_xml</span>
+              <a href="https://github.com/doba16/sonar-viewer" target='blank'>https://github.com/doba16/sonar-viewer</a>
+            </div>
+            <div>
+              <span className='material-symbols-outlined'>open_in_new</span>
+              <a href="licenses.txt" target='blank'>Open Source Lizenzen</a>
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </>
   )
 }

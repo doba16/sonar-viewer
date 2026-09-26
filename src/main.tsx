@@ -9,6 +9,7 @@ import SonarWorker from "./adapters/worker/Worker.ts?worker"
 import { type SonarViewerInvocableObjects, WorkerInvoker } from './adapters/worker/messages.ts'
 import { WorkerRecordingRepository } from './adapters/repositories/worker-recording-repository.ts'
 import { WorkerPingRepository } from './adapters/repositories/worker-ping-reposiotry.ts'
+import "material-symbols"
 
 /*
 const zipFileHolder = new ZipFileHolder()

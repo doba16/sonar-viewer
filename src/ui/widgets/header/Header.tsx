@@ -22,6 +22,7 @@ export type HeaderCenter = RecordingsListHeaderCenter | RecordingHeaderCenter | 
 
 type HeaderProps = {
     headerCenter: HeaderCenter
+    openAboutDialog: () => void
 }
 
 function HeaderCenter({headerCenter}: {headerCenter: HeaderCenter}) {
@@ -57,7 +58,8 @@ function HeaderCenter({headerCenter}: {headerCenter: HeaderCenter}) {
 }
 
 export default function Header({
-    headerCenter
+    headerCenter,
+    openAboutDialog
 }: HeaderProps) {
     const recordingsService = useRecordingsService()
 
@@ -69,6 +71,9 @@ export default function Header({
                 </div>
                 <button onClick={() => recordingsService.openZip()} title="Öffnen">
                     <span className="material-symbols-outlined">folder_open</span>
+                </button>
+                <button onClick={openAboutDialog} title="Öffnen">
+                    <span className="material-symbols-outlined">info</span>
                 </button>
             </div>
             <HeaderCenter headerCenter={headerCenter}/>

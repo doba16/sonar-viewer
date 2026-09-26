@@ -16,3 +16,27 @@ main {
 h1 {
   font-size: 1.5em;
 }
+
+.product-info {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  svg {
+    width: 5.5em;
+    height: 5.5em;
+    flex-shrink: 0;
+  }
+  
+  &>div {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    &>div {
+      display: flex;
+      gap: .25em;
+      align-items: center;
+    }
+  }
+}

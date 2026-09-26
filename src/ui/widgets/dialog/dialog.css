@@ -8,19 +8,29 @@
     opacity: 0;
     transform: translateY(-1em);
     visibility: hidden;
-    display: block;
+    display: flex;
     inset: 0;
     margin: auto;
     z-index: 99999;
 
-    transition: .3s ease-out;
+    flex-direction: column;
+
+    transition:
+        opacity .3s ease-out,
+        transform .3s ease-out,
+        visibility .3s allow-discrete;
+
+    max-width: 95vw;
+    max-height: 95vh;
+
+    box-shadow: 0 .5em 2em #0007;
 }
 
 .dialog[open] {
     opacity: 1;
     transform: translateY(0em);
     visibility: visible;
-    display: block;
+    display: flex;
 }
 
 .dialog::backdrop {
@@ -29,23 +39,27 @@
     visibility: hidden;
     display: block;
 
-    transition: .3s ease-out;
+    transition: .3s;
 }
 
 @starting-style {
-    .dialog::backdrop {
+    .dialog:modal::backdrop {
         opacity: 0;
         visibility: hidden;
+
+        background-color: #0000;
     }
 }
 
-.dialog[open]::backdrop {
+.dialog:modal::backdrop {
     opacity: 1;
     visibility: visible;
 }
 
 .dialog-body {
     padding: 1em 1em;
+    flex-shrink: 1;
+    overflow: auto;
 }
 
 .dialog-title {
