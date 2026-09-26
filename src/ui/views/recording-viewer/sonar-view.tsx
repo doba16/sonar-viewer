@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react"
 import type { Recording } from "../../../domain/recording/Recording"
 import { usePingService } from "../../../domain/Services"
 import { useViewerState } from "./viewer-state"
+import BoatIcon from "../../icons/misc/boat-location.svg?react"
 
 type SonarViewProps = {
     recording: Recording,
@@ -57,6 +58,9 @@ export function SonarView({
     }, targetCanvasState, [recording])
 
     return (
-        <canvas ref={canvasRef} style={{gridColumn:"span 1", gridRow:"span 2"}} />
+        <div className="sonar-view-container" style={{gridColumn:"span 1", gridRow:"span 2"}} >
+            <canvas className="sonar-view-canvas" ref={canvasRef}/>
+            <BoatIcon className="boat-icon" />
+        </div>
     )
 }

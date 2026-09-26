@@ -28,6 +28,10 @@ type Ping = {
     coordinateNorthing: number
 }
 
+function map(value: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number) {
+    return toLow + (toHigh - toLow) / (fromHigh - fromLow) * (value - fromLow)
+}
+
 export class DefaultPingRepository implements PingRepository {
     private zipFileHolder: ZipFileHolder
 
@@ -108,6 +112,14 @@ export class DefaultPingRepository implements PingRepository {
         const maxStarboardReturnCount = pingsStarboard.reduce((p, c) => Math.max(p, c.returnCount), 0)
         const maxReturnCount = Math.max(maxPortReturnCount, maxStarboardReturnCount)
 
+        // Get obtained ping times
+        const minPortPingTime = pingsPort.reduce((p, c) => Math.min(p, c.timeElapsed), Infinity)
+        const minStarboardPingTime = pingsStarboard.reduce((p, c) => Math.min(p, c.timeElapsed), Infinity)
+        const maxPortPingTime = pingsPort.reduce((p, c) => Math.max(p, c.timeElapsed), -Infinity)
+        const maxStarboardPingTime = pingsStarboard.reduce((p, c) => Math.max(p, c.timeElapsed), -Infinity)
+        const minPingTime = Math.min(minPortPingTime, minStarboardPingTime)
+        const maxPingTime = Math.max(maxPortPingTime, maxStarboardPingTime)
+
         // Only render pings when there are pings to render
         const pingsCount = Math.max(pingsPort.length, pingsStarboard.length)
         if (pingsCount > 10) {
@@ -150,10 +162,20 @@ export class DefaultPingRepository implements PingRepository {
 
             graphicsContext.putImageData(imageData, 0, 0)
 
-            viewerCanvasCtx.drawImage(pingsOnlyCanvas, 0, 0, width, height)
+            const topY = map(minPingTime, timeFrameStart, timeFrameEnd, 0, height)
+            const bottomY = map(maxPingTime, timeFrameStart, timeFrameEnd, 0, height)
+
+            viewerCanvasCtx.drawImage(pingsOnlyCanvas, 0, topY, width, bottomY - topY)
         }
 
-        // TODO draw boat icon here...
+        const middle = Math.floor(width / 2)
+
+        viewerCanvasCtx.strokeStyle = "red"
+        viewerCanvasCtx.lineWidth = 2
+        viewerCanvasCtx.beginPath()
+        viewerCanvasCtx.moveTo(middle, 0)
+        viewerCanvasCtx.lineTo(middle, height)
+        viewerCanvasCtx.stroke()
 
         return viewerCanvas.transferToImageBitmap()
     }

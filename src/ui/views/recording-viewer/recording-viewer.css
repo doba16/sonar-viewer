@@ -18,9 +18,24 @@
             min-width: 0;
         }
 
-        canvas {
+        .sonar-view-canvas {
             height: 100%;
             width: 100%;
+        }
+
+        .sonar-view-container {
+            position: relative;
+
+            .boat-icon {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+
+                width: 32px;
+                height: 32px;
+
+                transform: translate(-50%, -50%);
+            }
         }
     }
 
