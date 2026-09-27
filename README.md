@@ -1,32 +1,84 @@
-# React + TypeScript + Vite
+<p align="center">
+  <img src="public/sonar-viewer.svg" alt="Sonar Viewer" width="192">
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+# Sonar Viewer
 
-Currently, two official plugins are available:
+Viewing side scan sonar recordings made easy!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+Sonar Viewer includes the following features:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### General
 
-## Expanding the Oxlint configuration
+- Easily view recordings by opening a zip file containing the sonar data.
+- Local processing only. No data is uploaded to any server.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### Supported devices
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+- Humminbird &reg; Solix
+
+### Recording list
+
+- All recordings in the opened files are displayed in a list including a timestamp and duration.
+
+### Recording Viewer
+
+- Scroll through the recording using a timeline just like watching a video.
+- All viewers (map, side scan) will display the recording at the selected timeline position
+
+### Side Scan Sonar Viewer
+
+- View the side scan sonar view of the recording
+- The boat's position is marked with a boat icon.
+- Differing from a real sonar device, the currently selected timeline position is at the center to better match the position with the map view.
+
+### Map View
+
+- Position and heading of boat at current time in recording is marked on the map
+- The full track of the boat during the recording is shows as a path
+- Pan to current location: Click the location icon to center the map to the current boat location.
+- Follow mode: While the map is centered to the boat location, clicking the location button again enters follow mode. While scrolling through the timeline, the boat stays at the center of the map.
+
+## Usage
+
+Using Sonar Viewer is as simple as opening the hosted webapp at [https://doba16.github.io/sonar-viewer](https://doba16.github.io/sonar-viewer) and opening a zip file containing the recordings.
+
+The recording is processed in the browser.
+No data is ever uploaded to any server on the internet.
+
+> [!NOTE]
+> Sonar Viewer is currently tested with this device:
+> - Humminbird &reg; Solix 12
+
+### File Structure
+
+The opened zip file must contain the following files:
+
+```
+─ (root folder or sub folders)
+  ├ Rec<number1>
+  │ ├ B002.SON
+  │ └ B003.SON
+  ├ Rec<number2>
+  │ ├ B002.SON
+  │ └ B003.SON
+  ├ Rec<number1>.DAT
+  └ Rec<number2>.DAT
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+This corresponds to the file structure that is present on the SD card from the device.
+The zip file may also contain other files.
+
+## Troubleshooting
+
+### GPS
+
+GPS signals in recordings seem to be off by a few meters.
+I was able to calibrate the location based on a test recording of our device in my region.
+However, I am not sure if the same calibration works for other devices or in other locations.
+
+## Acknowledgements
+
+The [file structure of Humminbird &reg; recording files](https://cameronbodine.github.io/PINGMapper/docs/advanced/HumFileStructure.html) is described by the [Ping Mapper](https://cameronbodine.github.io/PINGMapper/) project.
