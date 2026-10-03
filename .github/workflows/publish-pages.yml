@@ -1,0 +1,43 @@
+name: Publish to GitHub Pages
+
+on:
+  # Triggers only on pushes to tags starting with 'v'
+  push:
+    tags:
+      - v**
+
+# Permissions to allow deployment to pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  packages: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v7
+      
+      - uses: pnpm/setup@v1
+        with:
+          version: 11
+          runtime: node@24
+          cache: true
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Build webapp
+        run: pnpm run build --base=/sonar-viewer
+      
+      - name: Upload webapp
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
