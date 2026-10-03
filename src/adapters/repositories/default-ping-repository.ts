@@ -151,8 +151,8 @@ export class DefaultPingRepository implements PingRepository {
                 }
             }
             // Port
-            for (let t = 0; t < pingsStarboard.length; t++) {
-                const ping = pingsStarboard[t]
+            for (let t = 0; t < pingsPort.length; t++) {
+                const ping = pingsPort[t]
                 for (let x = 0; x < ping.returnCount; x++) {
                     imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4] = portBeamFile.readUInt8(ping.returnsBegin + x)
                     imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 1] = portBeamFile.readUInt8(ping.returnsBegin + x)
