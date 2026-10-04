@@ -5,62 +5,69 @@ import { useViewerState } from "./viewer-state"
 import BoatIcon from "../../icons/misc/boat-location.svg?react"
 
 type SonarViewProps = {
-    recording: Recording,
-    timePosition: number
+	recording: Recording
+	timePosition: number
 }
 
-export function SonarView({
-    recording,
-    timePosition
-}: SonarViewProps) {
+export function SonarView({ recording, timePosition }: SonarViewProps) {
+	const pingService = usePingService()
 
-    const pingService = usePingService()
+	const canvasRef = useRef<HTMLCanvasElement>(null)
 
-    const canvasRef = useRef<HTMLCanvasElement>(null)
+	const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-    const [canvasSize, setCanvasSize] = useState({width: 0, height: 0})
+	// Resize Observer
+	useEffect(() => {
+		const canvas = canvasRef.current
+		if (!canvas) {
+			return
+		}
 
-    // Resize Observer
-    useEffect(() => {
-        const canvas = canvasRef.current
-        if (!canvas) {
-            return
-        }
-        
-        const resizeHandler = () => {
-            setCanvasSize({
-                width: canvas.clientWidth,
-                height: canvas.clientHeight
-            })
-        }
+		const resizeHandler = () => {
+			setCanvasSize({
+				width: canvas.clientWidth,
+				height: canvas.clientHeight
+			})
+		}
 
-        const resizeObserver = new ResizeObserver(resizeHandler)
-        resizeObserver.observe(canvas)
+		const resizeObserver = new ResizeObserver(resizeHandler)
+		resizeObserver.observe(canvas)
 
-        resizeHandler()
+		resizeHandler()
 
-        return () => resizeObserver.disconnect()
-    }, [])
+		return () => resizeObserver.disconnect()
+	}, [])
 
-    const targetCanvasState = {
-        canvasWidth: canvasSize.width,
-        canvasHeight: canvasSize.height,
-        timePosition: timePosition
-    }
+	const targetCanvasState = {
+		canvasWidth: canvasSize.width,
+		canvasHeight: canvasSize.height,
+		timePosition: timePosition
+	}
 
-    // Repaint canvas
-    useViewerState(async (state) => {
-        const canvas = canvasRef.current
-        if (!canvas) return
-        
-        // Request repaint
-        await pingService.renderPings(recording, state.timePosition, 90000, canvas, targetCanvasState.canvasWidth, targetCanvasState.canvasHeight)
-    }, targetCanvasState, [recording])
+	// Repaint canvas
+	useViewerState(
+		async state => {
+			const canvas = canvasRef.current
+			if (!canvas) return
 
-    return (
-        <div className="sonar-view-container" style={{gridColumn:"span 1", gridRow:"span 2"}} >
-            <canvas className="sonar-view-canvas" ref={canvasRef}/>
-            <BoatIcon className="boat-icon" />
-        </div>
-    )
+			// Request repaint
+			await pingService.renderPings(
+				recording,
+				state.timePosition,
+				90000,
+				canvas,
+				targetCanvasState.canvasWidth,
+				targetCanvasState.canvasHeight
+			)
+		},
+		targetCanvasState,
+		[recording]
+	)
+
+	return (
+		<div className="sonar-view-container" style={{ gridColumn: "span 1", gridRow: "span 2" }}>
+			<canvas className="sonar-view-canvas" ref={canvasRef} />
+			<BoatIcon className="boat-icon" />
+		</div>
+	)
 }

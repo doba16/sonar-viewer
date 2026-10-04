@@ -1,62 +1,60 @@
-import { DefaultListenable } from "../../domain/listenable/listenable";
-import type { RecordingService, RecordingServiceEvents } from "../../domain/recording/RecordingService";
-import type { RecordingRepository } from "../repositories/recording-repository";
+import { DefaultListenable } from "../../domain/listenable/listenable"
+import type { RecordingService, RecordingServiceEvents } from "../../domain/recording/RecordingService"
+import type { RecordingRepository } from "../repositories/recording-repository"
 
 export class BrowserRecordingService extends DefaultListenable<RecordingServiceEvents> implements RecordingService {
-    
-    private readonly _recordingRepository: RecordingRepository
-    
-    // Input for opening recordings
-    private _zipFileInput!: HTMLInputElement
+	private readonly _recordingRepository: RecordingRepository
 
-    constructor(recordingRepository: RecordingRepository) {
-        super()
-        this._recordingRepository = recordingRepository
-        this.createFileInput()
+	// Input for opening recordings
+	private _zipFileInput!: HTMLInputElement
 
-        this._recordingRepository.addWildcardListener((event, data) => {
-            this.publishEvent(event, data)
-        })
-    }
+	constructor(recordingRepository: RecordingRepository) {
+		super()
+		this._recordingRepository = recordingRepository
+		this.createFileInput()
 
-    isOpenDirectorySupported(): boolean {
-        return false
-    }
-    
-    isOpenZipSupported(): boolean {
-        return true
-    }
-    
-    openDirectory(): void {
-        throw new Error("Opening directories not supported.");
-    }
-    
-    openZip(): void {
-        this._zipFileInput.click()
-    }
+		this._recordingRepository.addWildcardListener((event, data) => {
+			this.publishEvent(event, data)
+		})
+	}
 
-    // =================================
-    // MARK: File input
-    // =================================
+	isOpenDirectorySupported(): boolean {
+		return false
+	}
 
-    private createFileInput() {
-        this._zipFileInput = document.createElement("input")
-        this._zipFileInput.type = "file"
-        this._zipFileInput.addEventListener("change", this.handleZipFileInputChange.bind(this))
-    }
+	isOpenZipSupported(): boolean {
+		return true
+	}
 
-    private handleZipFileInputChange() {
-        const files = this._zipFileInput.files
+	openDirectory(): void {
+		throw new Error("Opening directories not supported.")
+	}
 
-        if (!files || files.length < 1) {
-            this.publishEvent("error", {
-                type: "zip",
-                error: "No file provided"
-            })
-            return
-        }
+	openZip(): void {
+		this._zipFileInput.click()
+	}
 
-        this._recordingRepository.openZip(files[0])
-    }
+	// =================================
+	// MARK: File input
+	// =================================
 
+	private createFileInput() {
+		this._zipFileInput = document.createElement("input")
+		this._zipFileInput.type = "file"
+		this._zipFileInput.addEventListener("change", this.handleZipFileInputChange.bind(this))
+	}
+
+	private handleZipFileInputChange() {
+		const files = this._zipFileInput.files
+
+		if (!files || files.length < 1) {
+			this.publishEvent("error", {
+				type: "zip",
+				error: "No file provided"
+			})
+			return
+		}
+
+		this._recordingRepository.openZip(files[0])
+	}
 }

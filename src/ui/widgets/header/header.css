@@ -1,68 +1,68 @@
 .header {
-    display: flex;
-    gap: .5em;
-    align-items: center;
+	display: flex;
+	gap: 0.5em;
+	align-items: center;
 
-    width: 100%;
-    padding: .5em;
+	width: 100%;
+	padding: 0.5em;
 
-    background-color: var(--color-red);
-    color: var(--color-yellow);
-    font-weight: bold;
+	background-color: var(--color-red);
+	color: var(--color-yellow);
+	font-weight: bold;
 }
 
 .header .left {
-    flex-shrink: 0;
+	flex-shrink: 0;
 
-    display: flex;
-    gap: .5em;
-    align-items: center;
+	display: flex;
+	gap: 0.5em;
+	align-items: center;
 }
 
 .header .center {
-    margin: auto;
+	margin: auto;
 
-    display: flex;
-    gap: .5em;
-    align-items: center;
+	display: flex;
+	gap: 0.5em;
+	align-items: center;
 }
 
 .framed {
-    border: 1px solid var(--color-yellow);
-    border-radius: .25em;
+	border: 1px solid var(--color-yellow);
+	border-radius: 0.25em;
 
-    display: flex;
-    gap: .25em;
-    align-items: center;
+	display: flex;
+	gap: 0.25em;
+	align-items: center;
 
-    padding: .25em;
+	padding: 0.25em;
 }
 
 .header .logo {
-    font-size: 24px;
+	font-size: 24px;
 }
 
 .header button {
-    padding: 4px;
-    border-radius: 4px;
-    border: none;
-    appearance: none;
-    background: transparent;
-    color: inherit;
+	padding: 4px;
+	border-radius: 4px;
+	border: none;
+	appearance: none;
+	background: transparent;
+	color: inherit;
 
-    display: flex;
+	display: flex;
 
-    &:hover {
-        background-color: var(--color-yellow_hover)
-    }
+	&:hover {
+		background-color: var(--color-yellow_hover);
+	}
 }
 
 .header .divider-inline {
-    width: .25em;
-    height: .25em;
+	width: 0.25em;
+	height: 0.25em;
 
-    margin-inline: .5em;
+	margin-inline: 0.5em;
 
-    background-color: var(--color-yellow);
-    border-radius: 50%;
+	background-color: var(--color-yellow);
+	border-radius: 50%;
 }

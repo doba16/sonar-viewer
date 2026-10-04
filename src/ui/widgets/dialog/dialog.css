@@ -1,79 +1,79 @@
 .dialog {
-    padding: 0;
-    border: none;
-    border-radius: 1em;
+	padding: 0;
+	border: none;
+	border-radius: 1em;
 
-    outline: none;
+	outline: none;
 
-    opacity: 0;
-    transform: translateY(-1em);
-    visibility: hidden;
-    display: flex;
-    inset: 0;
-    margin: auto;
-    z-index: 99999;
+	opacity: 0;
+	transform: translateY(-1em);
+	visibility: hidden;
+	display: flex;
+	inset: 0;
+	margin: auto;
+	z-index: 99999;
 
-    flex-direction: column;
+	flex-direction: column;
 
-    transition:
-        opacity .3s ease-out,
-        transform .3s ease-out,
-        visibility .3s allow-discrete;
+	transition:
+		opacity 0.3s ease-out,
+		transform 0.3s ease-out,
+		visibility 0.3s allow-discrete;
 
-    max-width: 95vw;
-    max-height: 95vh;
+	max-width: 95vw;
+	max-height: 95vh;
 
-    box-shadow: 0 .5em 2em #0007;
+	box-shadow: 0 0.5em 2em #0007;
 }
 
 .dialog[open] {
-    opacity: 1;
-    transform: translateY(0em);
-    visibility: visible;
-    display: flex;
+	opacity: 1;
+	transform: translateY(0em);
+	visibility: visible;
+	display: flex;
 }
 
 .dialog::backdrop {
-    background-color: #0008;
-    opacity: 0;
-    visibility: hidden;
-    display: block;
+	background-color: #0008;
+	opacity: 0;
+	visibility: hidden;
+	display: block;
 
-    transition: .3s;
+	transition: 0.3s;
 }
 
 @starting-style {
-    .dialog:modal::backdrop {
-        opacity: 0;
-        visibility: hidden;
+	.dialog:modal::backdrop {
+		opacity: 0;
+		visibility: hidden;
 
-        background-color: #0000;
-    }
+		background-color: #0000;
+	}
 }
 
 .dialog:modal::backdrop {
-    opacity: 1;
-    visibility: visible;
+	opacity: 1;
+	visibility: visible;
 }
 
 .dialog-body {
-    padding: 1em 1em;
-    flex-shrink: 1;
-    overflow: auto;
+	padding: 1em 1em;
+	flex-shrink: 1;
+	overflow: auto;
 }
 
 .dialog-title {
-    font-size: 1rem;
-    padding: .5em 1em;
-    margin: 0;
+	font-size: 1rem;
+	padding: 0.5em 1em;
+	margin: 0;
 
-    border-bottom: 1px solid var(--color-red);
-    color: var(--color-red);
+	border-bottom: 1px solid var(--color-red);
+	color: var(--color-red);
 }
 
 .dialog-footer {
-    padding: 1em;
-    display: flex;
-    gap: .5em;
-    justify-content: flex-end;
+	padding: 1em;
+	display: flex;
+	gap: 0.5em;
+	justify-content: flex-end;
 }

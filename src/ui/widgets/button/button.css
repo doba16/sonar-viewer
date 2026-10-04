@@ -1,68 +1,68 @@
 .button {
-    border: none;
+	border: none;
 
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
 
-    outline-offset: .125em;
+	outline-offset: 0.125em;
 
-    cursor: pointer;
+	cursor: pointer;
 
-    display: flex;
-    gap: .5em;
-    align-items: center;
+	display: flex;
+	gap: 0.5em;
+	align-items: center;
 }
 
 .button.primary {
-    background-color: var(--color-blue);
-    color: white;
+	background-color: var(--color-blue);
+	color: white;
 
-    padding: .5em 1em;
-    border-radius: .25em;
+	padding: 0.5em 1em;
+	border-radius: 0.25em;
 
-    &:has(.start-icon) {
-        padding-left: .5em;
-    }
+	&:has(.start-icon) {
+		padding-left: 0.5em;
+	}
 
-    &:has(.end-icon) {
-        padding-right: .5em;
-    }
+	&:has(.end-icon) {
+		padding-right: 0.5em;
+	}
 
-    &:hover {
-        background-color: var(--color-blue_hover);
-    }
+	&:hover {
+		background-color: var(--color-blue_hover);
+	}
 
-    &:active {
-        background-color: var(--color-blue_active);
-    }
+	&:active {
+		background-color: var(--color-blue_active);
+	}
 }
 
 .button.secondary {
-    background-color: transparent;
-    color: var(--color-blue);
-    border: 0.0625em solid var(--color-blue);
+	background-color: transparent;
+	color: var(--color-blue);
+	border: 0.0625em solid var(--color-blue);
 
-    padding: .4375em .9375em;
-    border-radius: .25em;
+	padding: 0.4375em 0.9375em;
+	border-radius: 0.25em;
 
-    &:has(.start-icon) {
-        padding-left: .4375em;
-    }
+	&:has(.start-icon) {
+		padding-left: 0.4375em;
+	}
 
-    &:has(.end-icon) {
-        padding-right: .4375em;
-    }
+	&:has(.end-icon) {
+		padding-right: 0.4375em;
+	}
 
-    &:has(.icon) {
-        padding-inline: .4375em;
-    }
+	&:has(.icon) {
+		padding-inline: 0.4375em;
+	}
 
-    &:hover {
-        background-color: var(--color-blue_hover-transparent);
-    }
+	&:hover {
+		background-color: var(--color-blue_hover-transparent);
+	}
 
-    &:active {
-        background-color: var(--color-blue_active-transparent);
-    }
+	&:active {
+		background-color: var(--color-blue_active-transparent);
+	}
 }

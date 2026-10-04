@@ -1,31 +1,32 @@
-@import 'material-symbols';
+@import "material-symbols";
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 :root {
-  --color-red: #e30613;
-  --color-yellow: #ffed00;
-  --color-yellow_hover: #ffed0044;
-  --color-blue: #0569b4;
-  --color-blue_hover: #054d85;
-  --color-blue_hover-transparent: #0569b422;
-  --color-blue_active: #04406e;
-  --color-blue_active-transparent: #04406e22;
+	--color-red: #e30613;
+	--color-yellow: #ffed00;
+	--color-yellow_hover: #ffed0044;
+	--color-blue: #0569b4;
+	--color-blue_hover: #054d85;
+	--color-blue_hover-transparent: #0569b422;
+	--color-blue_active: #04406e;
+	--color-blue_active-transparent: #04406e22;
 }
 
-html, body {
-  margin: 0;
-  height: 100%;
+html,
+body {
+	margin: 0;
+	height: 100%;
 
-  font-family: system-ui, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
+	font-family: system-ui, sans-serif;
+	font-size: 16px;
+	line-height: 1.5;
 }
 
 .material-symbols-outlined {
-  user-select: none;
+	user-select: none;
 }

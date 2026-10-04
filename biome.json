@@ -1,0 +1,13 @@
+{
+	"files": {
+		"includes": ["**", "!!**/dist"]
+	},
+	"javascript": {
+		"formatter": {
+			"semicolons": "asNeeded",
+			"trailingCommas": "none",
+			"lineWidth": 120,
+			"arrowParentheses": "asNeeded"
+		}
+	}
+}

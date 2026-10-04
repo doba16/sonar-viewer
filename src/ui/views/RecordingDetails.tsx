@@ -4,27 +4,24 @@ import { PingsCanvas } from "./PingsCanvas"
 import { usePingService } from "../../domain/Services"
 
 type RecordingDetailsProps = {
-    recording: Recording
+	recording: Recording
 }
 
-export function RecordingDetails({
-    recording
-}: RecordingDetailsProps) {
-    
-    console.log("Render Details")
+export function RecordingDetails({ recording }: RecordingDetailsProps) {
+	console.log("Render Details")
 
-    const [timePos, setTimePos] = useState(0)
+	const [timePos, setTimePos] = useState(0)
 
-    const pingService = usePingService()
-    useEffect(() => {
-        pingService.createPingIndex(recording, "side-scan-port")
-    }, [recording])
+	const pingService = usePingService()
+	useEffect(() => {
+		pingService.createPingIndex(recording, "side-scan-port")
+	}, [recording])
 
-    return (
-        <>
-            <input type="range" min={0} max={100000} onChange={e => setTimePos(Number.parseInt(e.target.value))}/>
+	return (
+		<>
+			<input type="range" min={0} max={100000} onChange={e => setTimePos(Number.parseInt(e.target.value))} />
 
-            <PingsCanvas recording={recording} timePos={timePos} />
-        </>
-    )
+			<PingsCanvas recording={recording} timePos={timePos} />
+		</>
+	)
 }
