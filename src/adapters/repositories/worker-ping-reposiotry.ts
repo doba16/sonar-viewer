@@ -1,6 +1,6 @@
-import type { Coordinate, BoatPosition } from "../../domain/ping/Ping"
-import type { BeamId } from "../../domain/ping/PingService"
-import type { Recording } from "../../domain/recording/Recording"
+import type { BoatPosition, Coordinate } from "../../domain/ping/ping"
+import type { BeamId } from "../../domain/ping/ping-service"
+import type { Recording } from "../../domain/recording/recording"
 import type { SonarViewerInvocableObjects, WorkerInvoker } from "../worker/messages"
 import type { PingRepository } from "./ping-repository"
 

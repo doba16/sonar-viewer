@@ -1,16 +1,16 @@
-import { EmptyState } from "../../widgets/empty-state/empty-state"
 import SonarEmptyState from "../../icons/empty-state/sonar.svg?react"
+import { EmptyState } from "../../widgets/empty-state/empty-state"
 import "./welcome.css"
-import { Button } from "../../widgets/button/button"
-import { useRecordingsService } from "../../../domain/Services"
 import { useCallback } from "react"
+import { useRecordingsService } from "../../../domain/services"
+import { Button } from "../../widgets/button/button"
 
 export function Welcome() {
 	const recordingsService = useRecordingsService()
 
 	const handleOpen = useCallback(() => {
 		recordingsService.openZip()
-	}, [])
+	}, [recordingsService.openZip])
 
 	return (
 		<main className="welcome">

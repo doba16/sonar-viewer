@@ -1,14 +1,14 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import App from "./ui/app/App.tsx"
+import { BrowserPingService } from "./adapters/services/browser-ping-service.ts"
 import { BrowserRecordingService } from "./adapters/services/browser-recording-service.ts"
-import { ServicesProvider, type Services } from "./domain/Services.tsx"
-import { BrowserPingService } from "./adapters/services/BrowserPingService.ts"
+import { type Services, ServicesProvider } from "./domain/services.tsx"
+import App from "./ui/app/app.tsx"
 import "./index.css"
-import SonarWorker from "./adapters/worker/Worker.ts?worker"
-import { type SonarViewerInvocableObjects, WorkerInvoker } from "./adapters/worker/messages.ts"
-import { WorkerRecordingRepository } from "./adapters/repositories/worker-recording-repository.ts"
 import { WorkerPingRepository } from "./adapters/repositories/worker-ping-reposiotry.ts"
+import { WorkerRecordingRepository } from "./adapters/repositories/worker-recording-repository.ts"
+import { type SonarViewerInvocableObjects, WorkerInvoker } from "./adapters/worker/messages.ts"
+import SonarWorker from "./adapters/worker/worker.ts?worker"
 import "material-symbols"
 
 /*
@@ -32,7 +32,13 @@ const services: Services = {
 	pingService
 }
 
-createRoot(document.getElementById("root")!).render(
+const renderRoot = document.getElementById("root")
+
+if (renderRoot === null) {
+	throw "Failed to load app."
+}
+
+createRoot(renderRoot).render(
 	<StrictMode>
 		<ServicesProvider services={services}>
 			<App />

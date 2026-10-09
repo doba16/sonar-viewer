@@ -1,7 +1,7 @@
 import react from "@vitejs/plugin-react"
+import { licensePlugin } from "rolldown-license-plugin"
 import { defineConfig } from "vite"
 import svgr from "vite-plugin-svgr"
-import { licensePlugin } from "rolldown-license-plugin"
 
 // https://vite.dev/config/
 export default defineConfig({

@@ -1,4 +1,4 @@
-import type { Recording } from "../../../domain/recording/Recording"
+import type { Recording } from "../../../domain/recording/recording"
 import { Button } from "../../widgets/button/button"
 import { DataTable } from "../../widgets/data-table/data-table"
 import { Duration } from "../../widgets/duration/duration"

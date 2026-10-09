@@ -1,5 +1,5 @@
 import { DefaultListenable } from "../../domain/listenable/listenable"
-import type { RecordingService, RecordingServiceEvents } from "../../domain/recording/RecordingService"
+import type { RecordingService, RecordingServiceEvents } from "../../domain/recording/recording-service"
 import type { RecordingRepository } from "../repositories/recording-repository"
 
 export class BrowserRecordingService extends DefaultListenable<RecordingServiceEvents> implements RecordingService {

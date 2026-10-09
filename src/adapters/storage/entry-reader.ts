@@ -1,4 +1,4 @@
-import { Uint8ArrayWriter, type FileEntry } from "@zip.js/zip.js"
+import { type FileEntry, Uint8ArrayWriter } from "@zip.js/zip.js"
 
 export class EntryReader {
 	private _data: Uint8Array

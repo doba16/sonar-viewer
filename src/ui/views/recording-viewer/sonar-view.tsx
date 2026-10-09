@@ -1,8 +1,8 @@
-import { useRef, useEffect, useState } from "react"
-import type { Recording } from "../../../domain/recording/Recording"
-import { usePingService } from "../../../domain/Services"
-import { useViewerState } from "./viewer-state"
+import { useEffect, useRef, useState } from "react"
+import type { Recording } from "../../../domain/recording/recording"
+import { usePingService } from "../../../domain/services"
 import BoatIcon from "../../icons/misc/boat-location.svg?react"
+import { useViewerState } from "./viewer-state"
 
 type SonarViewProps = {
 	recording: Recording
@@ -51,17 +51,10 @@ export function SonarView({ recording, timePosition }: SonarViewProps) {
 			if (!canvas) return
 
 			// Request repaint
-			await pingService.renderPings(
-				recording,
-				state.timePosition,
-				90000,
-				canvas,
-				targetCanvasState.canvasWidth,
-				targetCanvasState.canvasHeight
-			)
+			await pingService.renderPings(recording, state.timePosition, 90000, canvas, state.canvasWidth, state.canvasHeight)
 		},
 		targetCanvasState,
-		[recording]
+		[recording, pingService.renderPings]
 	)
 
 	return (

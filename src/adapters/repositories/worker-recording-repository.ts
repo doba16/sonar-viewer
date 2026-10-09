@@ -1,6 +1,6 @@
 import { DefaultListenable } from "../../domain/listenable/listenable"
-import type { RecordingServiceEvents } from "../../domain/recording/RecordingService"
-import { type SonarViewerInvocableObjects, WorkerInvoker } from "../worker/messages"
+import type { RecordingServiceEvents } from "../../domain/recording/recording-service"
+import type { SonarViewerInvocableObjects, WorkerInvoker } from "../worker/messages"
 import type { RecordingRepository } from "./recording-repository"
 
 export class WorkerRecordingRepository

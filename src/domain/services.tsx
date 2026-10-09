@@ -1,6 +1,6 @@
-import { createContext, useContext, type PropsWithChildren } from "react"
-import type { RecordingService } from "./recording/RecordingService"
-import type { PingService } from "./ping/PingService"
+import { createContext, type PropsWithChildren, useContext } from "react"
+import type { PingService } from "./ping/ping-service"
+import type { RecordingService } from "./recording/recording-service"
 
 export type Services = {
 	recordingService: RecordingService
@@ -23,7 +23,7 @@ function useService<K extends keyof Services>(serviceName: K): Services[K] {
 	const service = servicesContext[serviceName]
 
 	if (service === undefined) {
-		throw new Error("Service not provided: " + serviceName)
+		throw new Error(`Service not provided: ${serviceName}`)
 	}
 
 	return service

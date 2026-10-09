@@ -1,9 +1,9 @@
 import { useState } from "react"
-import type { Recording } from "../../../domain/recording/Recording"
+import type { Recording } from "../../../domain/recording/recording"
 import "./recording-viewer.css"
 import { TimeDisplay } from "../../widgets/time-display/time-display"
-import { SonarView } from "./sonar-view"
 import { MapView } from "./map-view"
+import { SonarView } from "./sonar-view"
 
 declare module "react" {
 	interface CSSProperties {
@@ -43,7 +43,7 @@ export function RecordingViewer({ recording }: RecordingViewerProps) {
 						max={recording.duration}
 						value={timePosition}
 						step={500}
-						onChange={e => setTimePosition(Number.parseInt(e.target.value))}
+						onChange={e => setTimePosition(Number.parseInt(e.target.value, 10))}
 					/>
 				</div>
 				<div>

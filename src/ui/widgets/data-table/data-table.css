@@ -7,14 +7,14 @@
 	padding: 0.25em 0.5em;
 }
 
+.data-table td {
+	border-block: 1px solid black;
+}
+
 .data-table th,
 .data-table tfoot td {
 	border-block: 2px solid black;
 	text-align: left;
-}
-
-.data-table td {
-	border-block: 1px solid black;
 }
 
 .data-table .empty-state {

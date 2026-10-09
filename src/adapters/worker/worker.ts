@@ -2,8 +2,8 @@
 
 import { DefaultPingRepository } from "../repositories/default-ping-repository"
 import { DefaultRecordingRepository } from "../repositories/default-recording-repository"
-import { ZipFileHolder } from "../storage/ZipFileHolder"
-import { type SonarViewerInvocableObjects } from "./messages"
+import { ZipFileHolder } from "../storage/zip-file-holder"
+import type { SonarViewerInvocableObjects } from "./messages"
 import { setupWorkerMessaging } from "./messages-worker"
 
 const zipFileHolder = new ZipFileHolder()

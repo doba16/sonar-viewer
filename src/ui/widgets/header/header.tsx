@@ -1,4 +1,4 @@
-import { useRecordingsService } from "../../../domain/Services"
+import { useRecordingsService } from "../../../domain/services"
 import "./header.css"
 
 type RecordingsListHeaderCenter = {
@@ -38,7 +38,7 @@ function HeaderCenter({ headerCenter }: { headerCenter: HeaderCenter }) {
 	if (headerCenter.state === "recording") {
 		return (
 			<div className="center">
-				<button onClick={headerCenter.onBack}>
+				<button type="button" onClick={headerCenter.onBack}>
 					<span className="material-symbols-outlined">chevron_backward</span>
 				</button>
 				<div className="framed">
@@ -65,10 +65,10 @@ export default function Header({ headerCenter, openAboutDialog }: HeaderProps) {
 		<header className="header">
 			<div className="left">
 				<div className="logo">Sonar Viewer</div>
-				<button onClick={() => recordingsService.openZip()} title="Öffnen">
+				<button type="button" onClick={() => recordingsService.openZip()} title="Öffnen">
 					<span className="material-symbols-outlined">folder_open</span>
 				</button>
-				<button onClick={openAboutDialog} title="Öffnen">
+				<button type="button" onClick={openAboutDialog} title="Öffnen">
 					<span className="material-symbols-outlined">info</span>
 				</button>
 			</div>

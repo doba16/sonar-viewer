@@ -1,5 +1,5 @@
-import { useState, type DependencyList } from "react"
-import { useAsyncEffect } from "../../hooks/useAsyncEffect"
+import { type DependencyList, useState } from "react"
+import { useAsyncEffect } from "../../hooks/use-async-effect"
 
 export function shallowEqual<T extends Record<string, number | string | boolean> | undefined>(a: T, b: T) {
 	if (a === b) {
@@ -8,7 +8,7 @@ export function shallowEqual<T extends Record<string, number | string | boolean>
 	if (a === undefined || b === undefined) {
 		return false
 	}
-	for (let prop in a) {
+	for (const prop in a) {
 		if (a[prop] !== b[prop]) {
 			return false
 		}
@@ -55,7 +55,7 @@ export function useViewerState<T extends Record<string, number | string | boolea
 		setCurrentState(targetState)
 		setRefreshing(false)
 		setCurrentDependencies(dependencies)
-	}, [refreshing, currentDependencies, dependencies])
+	}, [loadView, currentState, targetState, refreshing, currentDependencies, dependencies])
 
 	return {
 		refreshing,

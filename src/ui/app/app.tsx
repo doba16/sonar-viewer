@@ -1,13 +1,13 @@
 import { Suspense, useEffect, useState } from "react"
-import type { Recording, Recordings } from "../../domain/recording/Recording"
-import Header, { type HeaderCenter } from "../widgets/header/Header"
+import type { Recording, Recordings } from "../../domain/recording/recording"
+import { useRecordingsService } from "../../domain/services"
 import { RecordingList } from "../views/recordings-list/recordings-list"
-import { useRecordingsService } from "../../domain/Services"
-import "./App.css"
-import { Welcome } from "../views/welcome/welcome"
-import { RecordingViewer } from "../views/recording-viewer/recording-viewer"
-import { Dialog } from "../widgets/dialog/dialog"
+import Header, { type HeaderCenter } from "../widgets/header/header"
+import "./app.css"
 import SonarViewerIcon from "../icons/empty-state/sonar.svg?react"
+import { RecordingViewer } from "../views/recording-viewer/recording-viewer"
+import { Welcome } from "../views/welcome/welcome"
+import { Dialog } from "../widgets/dialog/dialog"
 
 function App() {
 	const [recordings, setRecordings] = useState<Recordings>()
@@ -81,11 +81,9 @@ function App() {
 			)}
 
 			{selectedRecording !== undefined && (
-				<>
-					<Suspense fallback="Loading pings...">
-						<RecordingViewer recording={selectedRecording} />
-					</Suspense>
-				</>
+				<Suspense fallback="Loading pings...">
+					<RecordingViewer recording={selectedRecording} />
+				</Suspense>
 			)}
 
 			<Dialog

@@ -1,5 +1,5 @@
 import type { Listenable } from "../listenable/listenable"
-import type { Recordings } from "./Recording"
+import type { Recordings } from "./recording"
 
 export type OpenType = "folder" | "zip"
 

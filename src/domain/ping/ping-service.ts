@@ -1,5 +1,5 @@
-import type { Recording } from "../recording/Recording"
-import type { BoatPosition, Coordinate } from "./Ping"
+import type { Recording } from "../recording/recording"
+import type { BoatPosition, Coordinate } from "./ping"
 
 export type BeamId = "side-scan-port" | "side-scan-starboard"
 

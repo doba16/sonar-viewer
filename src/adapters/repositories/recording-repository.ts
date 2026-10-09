@@ -1,5 +1,5 @@
 import type { Listenable } from "../../domain/listenable/listenable"
-import type { RecordingServiceEvents } from "../../domain/recording/RecordingService"
+import type { RecordingServiceEvents } from "../../domain/recording/recording-service"
 
 /**
  * Repository for opening recordings from a folder or a zip file.

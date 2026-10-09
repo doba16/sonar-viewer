@@ -1,10 +1,10 @@
-import { BlobReader, ZipReader, type FileEntry } from "@zip.js/zip.js"
-import type { RecordingServiceEvents } from "../../domain/recording/RecordingService"
-import { ZipFile } from "../storage/ZipFile"
-import { ZipFileHolder } from "../storage/ZipFileHolder"
-import type { RecordingRepository } from "./recording-repository"
-import type { Recording, Recordings } from "../../domain/recording/Recording"
+import { BlobReader, type FileEntry, ZipReader } from "@zip.js/zip.js"
 import { DefaultListenable } from "../../domain/listenable/listenable"
+import type { Recording, Recordings } from "../../domain/recording/recording"
+import type { RecordingServiceEvents } from "../../domain/recording/recording-service"
+import { ZipFile } from "../storage/zip-file"
+import type { ZipFileHolder } from "../storage/zip-file-holder"
+import type { RecordingRepository } from "./recording-repository"
 
 export class DefaultRecordingRepository
 	extends DefaultListenable<RecordingServiceEvents>

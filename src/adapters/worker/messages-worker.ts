@@ -3,6 +3,7 @@
 import type { Listenable, ListenableEvents } from "../../domain/listenable/listenable"
 import type { FromWorkerMessage, InvocableObjects, ListenableMembers, ToWorkerMessage } from "./messages"
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO refactor not to use any
 function isListenable<T extends ListenableEvents>(object: any): object is Listenable<T> {
 	return "addWildcardListener" in object
 }
@@ -15,13 +16,7 @@ export function setupWorkerMessaging<T extends InvocableObjects>(invocableObject
 		}
 		const pendingResult = invocableObjects[data.invocable][data.method](...data.args)
 
-		let result
-
-		if (pendingResult instanceof Promise) {
-			result = await pendingResult
-		} else {
-			result = pendingResult
-		}
+		const result = pendingResult instanceof Promise ? await pendingResult : pendingResult
 
 		const resultMessage: FromWorkerMessage<T> = {
 			type: "result",

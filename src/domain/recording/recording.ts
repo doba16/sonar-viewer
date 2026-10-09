@@ -1,4 +1,4 @@
-import type { Coordinate } from "../ping/Ping"
+import type { Coordinate } from "../ping/ping"
 
 export type Recording = {
 	name: string

@@ -11,7 +11,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function Button({ children, variant, startIcon, endIcon, icon, ...rest }: ButtonProps) {
 	return (
-		<button {...rest} className={`button ${variant}`}>
+		<button type="button" {...rest} className={`button ${variant}`}>
 			{startIcon !== undefined && <span className="material-symbols-outlined start-icon">{startIcon}</span>}
 			{icon !== undefined && <span className="material-symbols-outlined icon">{icon}</span>}
 			{children}

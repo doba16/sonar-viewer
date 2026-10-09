@@ -1,8 +1,8 @@
-import type { BoatPosition, Coordinate } from "../../domain/ping/Ping"
-import type { BeamId } from "../../domain/ping/PingService"
-import type { Recording } from "../../domain/recording/Recording"
-import type { EntryReader } from "../storage/EntryReader"
-import type { ZipFileHolder } from "../storage/ZipFileHolder"
+import type { BoatPosition, Coordinate } from "../../domain/ping/ping"
+import type { BeamId } from "../../domain/ping/ping-service"
+import type { Recording } from "../../domain/recording/recording"
+import type { EntryReader } from "../storage/entry-reader"
+import type { ZipFileHolder } from "../storage/zip-file-holder"
 import type { PingRepository } from "./ping-repository"
 
 const BEAM_FILE_NAMES: Record<BeamId, string> = {
@@ -210,10 +210,10 @@ export class DefaultPingRepository implements PingRepository {
 			northing: lastPing.coordinateNorthing
 		})
 
-		for (let ping of pings) {
+		for (const ping of pings) {
 			if (
-				lastPing.coordinateEasting != ping.coordinateEasting ||
-				lastPing.coordinateNorthing != ping.coordinateNorthing
+				lastPing.coordinateEasting !== ping.coordinateEasting ||
+				lastPing.coordinateNorthing !== ping.coordinateNorthing
 			) {
 				coordinates.push({
 					easting: lastPing.coordinateEasting,
@@ -230,7 +230,7 @@ export class DefaultPingRepository implements PingRepository {
 		const beamFile = await this.getBeamFile(recording, "side-scan-port")
 		const pings = this.loadPings(beamFile, 0, Infinity)
 
-		for (let ping of pings) {
+		for (const ping of pings) {
 			if (ping.timeElapsed > time) {
 				return {
 					coordinate: {
@@ -279,14 +279,14 @@ export class DefaultPingRepository implements PingRepository {
 
 		// Determine beam file name
 		const folderName = recording.name.substring(0, recording.name.length - 4)
-		const beamFileName = folderName + "/" + BEAM_FILE_NAMES[beam]
+		const beamFileName = `${folderName}/${BEAM_FILE_NAMES[beam]}`
 
 		// Find beam file in zip
 		const entries = zipFile.getEntries()
 		const beamFile = entries.find(e => e.filename === beamFileName)
 
 		if (!beamFile || beamFile.directory) {
-			throw new Error("Beam file not found: " + beamFileName)
+			throw new Error(`Beam file not found: ${beamFileName}`)
 		}
 
 		// Return corresponding entry reader
@@ -303,7 +303,7 @@ export class DefaultPingRepository implements PingRepository {
 		const headerMagicNumber = entry.readUInt32(headerOffset)
 
 		if (headerMagicNumber !== 0x21abdec0) {
-			throw new Error("Header does not start with expected magic number at offset " + headerOffset)
+			throw new Error(`Header does not start with expected magic number at offset ${headerOffset}`)
 		}
 
 		const timeElapsed = entry.readUInt32LE(headerOffset + 10)
@@ -352,6 +352,6 @@ export class DefaultPingRepository implements PingRepository {
 		if (!this.pingIndex.has(recording)) {
 			this.pingIndex.set(recording, new Map())
 		}
-		this.pingIndex.get(recording)!.set(beam, pings)
+		this.pingIndex.get(recording)?.set(beam, pings)
 	}
 }

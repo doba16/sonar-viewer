@@ -1,4 +1,4 @@
-import type { ZipFile } from "./ZipFile"
+import type { ZipFile } from "./zip-file"
 
 export class ZipFileHolder {
 	private _zipFile?: ZipFile

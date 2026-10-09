@@ -1,10 +1,21 @@
-import { Control, DomEvent, DomUtil, LatLng, Map, map, point, polyline, Projection, tileLayer } from "leaflet"
+import {
+	Control,
+	DomEvent,
+	DomUtil,
+	type LatLng,
+	type Map as LMap,
+	map,
+	Projection,
+	point,
+	polyline,
+	tileLayer
+} from "leaflet"
 import { useRef } from "react"
 import "leaflet/dist/leaflet.css"
-import type { Recording } from "../../../domain/recording/Recording"
-import { usePingService } from "../../../domain/Services"
-import { useAsyncEffect } from "../../hooks/useAsyncEffect"
-import type { Coordinate } from "../../../domain/ping/Ping"
+import type { Coordinate } from "../../../domain/ping/ping"
+import type { Recording } from "../../../domain/recording/recording"
+import { usePingService } from "../../../domain/services"
+import { useAsyncEffect } from "../../hooks/use-async-effect"
 import BoatPositionIcon from "../../icons/misc/boat-location.svg?react"
 import "./map-view.css"
 import { useViewerState } from "./viewer-state"
@@ -21,8 +32,8 @@ const FOLLOW_MODE_ICONS: Record<FollowMode, string> = {
 }
 
 class SonarMap {
-	private _map: Map
-	private _boatMarker: HTMLElement
+	private _map: LMap
+	private _boatMarker?: HTMLElement
 	private _boatPosition: Coordinate
 	private _boatPositionLatLng: LatLng
 	private _boatRotation: number = 0
@@ -42,7 +53,7 @@ class SonarMap {
 		}).addTo(this._map)
 
 		// Add boat
-		this._boatMarker = document.getElementById("boat-marker")!
+		this._boatMarker = document.getElementById("boat-marker") ?? undefined
 		this._boatPosition = center
 		this._boatPositionLatLng = this._convert(center)
 		this._updateBoat()
@@ -93,9 +104,9 @@ class SonarMap {
 
 	private _updateBoat() {
 		const pixelPosition = this._map.latLngToContainerPoint(this._boatPositionLatLng)
-		this._boatMarker.style.setProperty("--boat-translate-x", `${pixelPosition.x}px`)
-		this._boatMarker.style.setProperty("--boat-translate-y", `${pixelPosition.y}px`)
-		this._boatMarker.style.setProperty("--boat-rotation", `${this.boatRotation}deg`)
+		this._boatMarker?.style.setProperty("--boat-translate-x", `${pixelPosition.x}px`)
+		this._boatMarker?.style.setProperty("--boat-translate-y", `${pixelPosition.y}px`)
+		this._boatMarker?.style.setProperty("--boat-rotation", `${this.boatRotation}deg`)
 	}
 
 	private _convert(coordinate: Coordinate): LatLng {
@@ -159,7 +170,7 @@ export function MapView({ recording, timePosition }: MapViewProps) {
 
 	const pingService = usePingService()
 
-	const {} = useViewerState(
+	useViewerState(
 		async state => {
 			const position = await pingService.findCoordinateAt(recording, state.timePosition)
 
@@ -172,7 +183,7 @@ export function MapView({ recording, timePosition }: MapViewProps) {
 			map.boatRotation = position.heading
 		},
 		{ timePosition },
-		[recording]
+		[recording, pingService.findCoordinateAt]
 	)
 
 	useAsyncEffect(async () => {
@@ -186,9 +197,7 @@ export function MapView({ recording, timePosition }: MapViewProps) {
 
 		const coords = await pingService.findCoordinates(recording)
 		map.addTrack(coords)
-	}, [recording])
-
-	useAsyncEffect(async () => {}, [timePosition])
+	}, [recording, pingService.findCoordinates])
 
 	return (
 		<div ref={mapRootRef} style={{ gridColumn: "2 / span 1", gridRow: "span 2" }}>

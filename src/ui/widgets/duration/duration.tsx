@@ -17,7 +17,7 @@ export function Duration({ duration }: DurationProps) {
 		const components: [number, string][] = []
 		let remaining = Math.floor(duration)
 
-		for (let unit of UNITS) {
+		for (const unit of UNITS) {
 			if (unit[0] === undefined) {
 				components.push([remaining, unit[1]])
 				break

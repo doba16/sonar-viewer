@@ -1,5 +1,6 @@
-export type ListenerId = Symbol
+export type ListenerId = symbol
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO refactor not to use any
 export type ListenableEvents = Record<string, any>
 
 type Listener<T> = (data: T) => void
@@ -15,12 +16,12 @@ export interface Listenable<L extends ListenableEvents> {
 }
 
 export class DefaultListenable<L extends ListenableEvents> implements Listenable<L> {
-	private _listeners = [] as [ListenerId, keyof L, Listener<any>][]
+	private _listeners = [] as [ListenerId, keyof L, Listener<L[keyof L]>][]
 	private _wildcardListeners = new Map<ListenerId, WildcardListener<L>>()
 
 	addListener<E extends keyof L>(event: E, listener: Listener<L[E]>): ListenerId {
 		const id = Symbol()
-		this._listeners.push([id, event, listener])
+		this._listeners.push([id, event, listener as Listener<L[keyof L]>])
 		return id
 	}
 
@@ -38,7 +39,9 @@ export class DefaultListenable<L extends ListenableEvents> implements Listenable
 	}
 
 	protected publishEvent<E extends keyof L>(event: E, data: L[E]) {
-		this._wildcardListeners.forEach(listener => listener(event, data))
+		this._wildcardListeners.forEach(listener => {
+			listener(event, data)
+		})
 		this._listeners.forEach(([_, e, listener]) => {
 			if (e === event) {
 				listener(data)

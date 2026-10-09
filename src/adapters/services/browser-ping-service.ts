@@ -1,6 +1,6 @@
-import type { BeamId, PingService } from "../../domain/ping/PingService"
-import type { Recording } from "../../domain/recording/Recording"
-import type { BoatPosition, Coordinate } from "../../domain/ping/Ping"
+import type { BoatPosition, Coordinate } from "../../domain/ping/ping"
+import type { BeamId, PingService } from "../../domain/ping/ping-service"
+import type { Recording } from "../../domain/recording/recording"
 import type { PingRepository } from "../repositories/ping-repository"
 
 export class BrowserPingService implements PingService {

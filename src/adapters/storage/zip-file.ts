@@ -1,5 +1,5 @@
 import type { Entry, ZipReader } from "@zip.js/zip.js"
-import { EntryReader } from "./EntryReader"
+import { EntryReader } from "./entry-reader"
 
 export class ZipFile {
 	private _entries: Entry[]

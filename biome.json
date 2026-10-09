@@ -9,5 +9,39 @@
 			"lineWidth": 120,
 			"arrowParentheses": "asNeeded"
 		}
+	},
+	"linter": {
+		"domains": {
+			"react": "recommended"
+		},
+		"rules": {
+			"style": {
+				"useFilenamingConvention": {
+					"level": "warn",
+					"options": {
+						"filenameCases": ["kebab-case"]
+					}
+				}
+			},
+			"correctness": {
+				"useExhaustiveDependencies": {
+					"level": "error",
+					"options": {
+						"hooks": [
+							{
+								"name": "useAsyncEffect",
+								"closureIndex": 0,
+								"dependenciesIndex": 1
+							},
+							{
+								"name": "useViewerState",
+								"closureIndex": 0,
+								"dependenciesIndex": 2
+							}
+						]
+					}
+				}
+			}
+		}
 	}
 }

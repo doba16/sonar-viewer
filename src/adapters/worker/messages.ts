@@ -1,35 +1,20 @@
-/*
-type CallbackType = "open-recordings"
-
-export type FromWorkerCallbackMessage<T extends unknown[]> = {
-    type: "callback",
-    callback: CallbackType,
-    args: T
-}
-
-export type FromWorkerResultMessage = {
-    type: "result",
-    invocation: Symbol,
-    result: unknown
-}
-
-export type FromWorkerMessage<T extends unknown[]> = FromWorkerCallbackMessage<T> | FromWorkerResultMessage
-*/
-
 import { DefaultListenable, type Listenable, type ListenableEvents } from "../../domain/listenable/listenable"
 import type { PingRepository } from "../repositories/ping-repository"
 import type { RecordingRepository } from "../repositories/recording-repository"
 
 type FunctionMembers<T> = {
+	// biome-ignore lint/suspicious/noExplicitAny: TODO refactor not to use any
 	[K in keyof T as T[K] extends (...args: any[]) => any ? K : never]: T[K]
 }
 
 export type ListenableMembers<T> = {
+	// biome-ignore lint/suspicious/noExplicitAny: TODO refactor not to use any
 	[K in keyof T as T[K] extends Listenable<any> ? K : never]: T[K]
 }
 
 export type ListenersEvents<T> = T extends Listenable<infer E> ? E : never
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO refactor not to use any
 export type InvocableObjects = Record<string, any>
 
 // Messages to the worker are always calls, so no message type required
@@ -68,6 +53,7 @@ class RepeatingListenable<T extends ListenableEvents> extends DefaultListenable<
 export class WorkerInvoker<T extends InvocableObjects> {
 	private _worker: Worker
 
+	// biome-ignore lint/suspicious/noExplicitAny: TODO refactor to not use any
 	private _listeners = new Map<keyof ListenableMembers<T>, RepeatingListenable<any>>()
 
 	private _callbacks = new Map<
