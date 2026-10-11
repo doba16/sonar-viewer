@@ -151,14 +151,15 @@ export class DefaultPingRepository implements PingRepository {
 			// Starboard
 			for (let t = 0; t < pingsStarboard.length; t++) {
 				const ping = pingsStarboard[t]
+				const y = pingsStarboard.length - t - 1
 				for (let x = 0; x < ping.returnCount; x++) {
-					imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4] = starboardBeamFile.readUInt8(
+					imageData.data[(y * imageData.width + (x + maxReturnCount)) * 4] = starboardBeamFile.readUInt8(
 						ping.returnsBegin + x
 					)
-					imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 1] = starboardBeamFile.readUInt8(
+					imageData.data[(y * imageData.width + (x + maxReturnCount)) * 4 + 1] = starboardBeamFile.readUInt8(
 						ping.returnsBegin + x
 					)
-					imageData.data[(t * imageData.width + (x + maxReturnCount)) * 4 + 2] = starboardBeamFile.readUInt8(
+					imageData.data[(y * imageData.width + (x + maxReturnCount)) * 4 + 2] = starboardBeamFile.readUInt8(
 						ping.returnsBegin + x
 					)
 				}
@@ -166,14 +167,15 @@ export class DefaultPingRepository implements PingRepository {
 			// Port
 			for (let t = 0; t < pingsPort.length; t++) {
 				const ping = pingsPort[t]
+				const y = pingsStarboard.length - t - 1
 				for (let x = 0; x < ping.returnCount; x++) {
-					imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4] = portBeamFile.readUInt8(
+					imageData.data[(y * imageData.width + (maxReturnCount - x)) * 4] = portBeamFile.readUInt8(
 						ping.returnsBegin + x
 					)
-					imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 1] = portBeamFile.readUInt8(
+					imageData.data[(y * imageData.width + (maxReturnCount - x)) * 4 + 1] = portBeamFile.readUInt8(
 						ping.returnsBegin + x
 					)
-					imageData.data[(t * imageData.width + (maxReturnCount - x)) * 4 + 2] = portBeamFile.readUInt8(
+					imageData.data[(y * imageData.width + (maxReturnCount - x)) * 4 + 2] = portBeamFile.readUInt8(
 						ping.returnsBegin + x
 					)
 				}
@@ -181,8 +183,8 @@ export class DefaultPingRepository implements PingRepository {
 
 			graphicsContext.putImageData(imageData, 0, 0)
 
-			const topY = map(minPingTime, timeFrameStart, timeFrameEnd, 0, height)
-			const bottomY = map(maxPingTime, timeFrameStart, timeFrameEnd, 0, height)
+			const topY = map(maxPingTime, timeFrameEnd, timeFrameStart, 0, height)
+			const bottomY = map(minPingTime, timeFrameEnd, timeFrameStart, 0, height)
 
 			viewerCanvasCtx.drawImage(pingsOnlyCanvas, 0, topY, width, bottomY - topY)
 		}
